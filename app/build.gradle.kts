@@ -70,29 +70,10 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-
     //Navigation component
     val naVersion = "2.7.6"
     implementation ("androidx.navigation:navigation-fragment-ktx:$naVersion")
     implementation ("androidx.navigation:navigation-ui-ktx:$naVersion")
-
-    //loading button
-    implementation ("br.com.simplepass:loading-button-android:2.2.0")
-
-    //Glide
-    implementation ("com.github.bumptech.glide:glide:4.13.0")
-
-    //circular image
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
-
-    //viewpager2 indicatior
-    implementation ("io.github.vejei.viewpagerindicator:viewpagerindicator:1.0.0-alpha.1")
-
-    //stepView
-    implementation ("com.shuhart.stepview:stepview:1.5.1")
-
-    //Android Ktx
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.6")
 
     //hilt
     implementation("com.google.dagger:hilt-android:2.48")
