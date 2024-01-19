@@ -1,5 +1,6 @@
-package com.jask.shopping.presentation.screens.loginRegisterScreen
+package com.jask.shopping.presentation.screens.register_screen
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,14 +13,14 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class LoginRegisterScreenViewModel @Inject constructor (
+class RegisterViewmodel @Inject constructor (
     private val repository: AuthRepository
 ): ViewModel() {
 
     private val _state = mutableStateOf(RegisterStates())
     val state: State<RegisterStates> = _state
 
-    fun registerUser(email: String, password: String) = viewModelScope.launch {
+    private fun registerUser(email: String, password: String) = viewModelScope.launch {
 
         repository.registerUser(email = email, password = password).collect{
             result ->
@@ -31,6 +32,7 @@ class LoginRegisterScreenViewModel @Inject constructor (
 
                 is Resource.Success -> {
                     _state.value = _state.value.copy( isSuccess = "Sign Up Success" )
+                    Log.d("viewModel", "registerUser: success")
                 }
 
                 is Resource.Error -> {
@@ -38,5 +40,14 @@ class LoginRegisterScreenViewModel @Inject constructor (
                 }
             }
         }
+    }
+
+    fun onEvent(event: RegisterEvents) {
+        when (event){
+            is RegisterEvents.CreateAccountWithEmailAndPassword -> {
+                registerUser(email = event.email, password = event.password)
+            }
+        }
+
     }
 }

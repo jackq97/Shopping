@@ -82,10 +82,11 @@ dependencies {
 
     //navigation
     implementation ("androidx.navigation:navigation-compose:2.7.6")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
     //Firebase
-    implementation ("com.google.firebase:firebase-auth:22.3.0")
+    implementation ("com.google.firebase:firebase-auth:22.3.1")
 
     //Coroutines with firebase
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }

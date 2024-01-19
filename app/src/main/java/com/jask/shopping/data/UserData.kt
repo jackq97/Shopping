@@ -1,6 +1,6 @@
 package com.jask.shopping.data
 
-data class UserRegisterForum(
+data class UserData(
     val firstName: String,
     val lastName: String,
     val email: String,
