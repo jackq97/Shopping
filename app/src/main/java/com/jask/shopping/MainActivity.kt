@@ -13,18 +13,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.jask.shopping.navigation.Screens
 import com.jask.shopping.presentation.screens.LoginRegisterScreen
+import com.jask.shopping.presentation.screens.home_screen.HomeScreen
 import com.jask.shopping.presentation.screens.login_screen.GoogleAuthUiClient
 import com.jask.shopping.presentation.screens.login_screen.LoginScreen
 import com.jask.shopping.presentation.screens.login_screen.LoginViewModel
 import com.jask.shopping.presentation.screens.register_screen.RegisterScreen
-import com.jask.shopping.presentation.screens.register_screen.RegisterStates
 import com.jask.shopping.presentation.screens.register_screen.RegisterViewmodel
 import com.jask.shopping.ui.theme.ShoppingTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +42,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ShoppingTheme {
-                val navController: NavHostController = rememberNavController()
+
+                val navController = rememberNavController()
 
                 NavHost(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
 
                         LaunchedEffect(key1 = Unit) {
                             if(googleAuthUiClient.getSignedInUser() != null) {
-                                navController.navigate("profile")
+                                navController.navigate(Screens.HomeScreen.route)
                             }
                         }
 
@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
                                     Toast.LENGTH_LONG
                                 ).show()
 
-                                navController.navigate("profile")
+                                navController.navigate(Screens.HomeScreen.route)
                                 viewModel.resetState()
                             }
                         }
@@ -108,11 +108,31 @@ class MainActivity : ComponentActivity() {
                     composable(route = Screens.RegisterScreen.route) {
 
                         val registerViewModel: RegisterViewmodel = hiltViewModel()
+                        val state = registerViewModel.state.value
 
-                        RegisterScreen(state = RegisterStates(),
+                        RegisterScreen(state = state,
                             navController = navController,
                             onEvent = registerViewModel::onEvent
-                        ) }
+                        )
+                    }
+
+                    composable(route = Screens.HomeScreen.route) {
+
+                        HomeScreen(
+                            onSignOut = {
+                                lifecycleScope.launch {
+                                    googleAuthUiClient.signOut()
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Signed out",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    navController.popBackStack()
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

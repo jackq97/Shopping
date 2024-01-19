@@ -25,7 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.navigation.Screens
 
 @Composable
-fun LoginScreen(navController: NavController,
+fun LoginScreen(
+                navController: NavController,
                 state: LoginState,
                 onSignInClick: () -> Unit
                 ){
@@ -74,7 +75,7 @@ fun LoginScreen(navController: NavController,
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Button(onClick = { onSignInClick }) {
+                Button(onClick = onSignInClick) {
                     Text(text = "Google")
                 }
             }

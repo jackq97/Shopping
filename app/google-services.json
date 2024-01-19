@@ -12,7 +12,20 @@
           "package_name": "com.jask.shopping"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "202285835172-gatg958ptg19bpgkeep81g7pt9fk331r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jask.shopping",
+            "certificate_hash": "6f5655b7b90db8100b8d4d7513c151cea1ba2d3b"
+          }
+        },
+        {
+          "client_id": "202285835172-s6qhdrhfl4j2nsui9tsmribpqpoi4d3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDf2uE_RWTvWqmGn0YVg2AqhDv_pfnxRAM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202285835172-s6qhdrhfl4j2nsui9tsmribpqpoi4d3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
