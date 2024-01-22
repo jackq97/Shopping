@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.navigation.Screens
+import com.jask.shopping.util.RegisterValidation
 
 @Composable
 fun RegisterScreen(
@@ -54,10 +55,25 @@ fun RegisterScreen(
                 }
             }
 
-            OutlinedTextField(value = firstName, label = { Text(text = "First Name")}, onValueChange = { firstName = it })
-            OutlinedTextField(value = lastName, label = { Text(text = "Last Name")}, onValueChange = { lastName = it })
-            OutlinedTextField(value = email,label = { Text(text = "Email")}, onValueChange = { email = it })
-            OutlinedTextField(value = password, label = { Text(text = "password")}, onValueChange = { password = it })
+            OutlinedTextField(value = firstName,
+                label = { Text(text = "First Name")},
+                onValueChange = { firstName = it })
+
+            OutlinedTextField(value = lastName,
+                label = { Text(text = "Last Name")},
+                onValueChange = { lastName = it })
+
+            OutlinedTextField(value = email,
+                label = { Text(text = "Email")},
+                onValueChange = { email = it },
+                isError = true,
+                supportingText = { Text(text = "this is an error")})
+
+            OutlinedTextField(value = password,
+                label = { Text(text = "password")},
+                onValueChange = { password = it },
+                isError = true,
+                supportingText = { Text(text = "this is an error")})
             
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -99,6 +115,6 @@ fun RegisterScreen(
 fun RegisterScreenPreview(){
     RegisterScreen(state = RegisterStates(),
         navController = rememberNavController(),
-        onEvent = {}
+        onEvent = {},
     )
 }

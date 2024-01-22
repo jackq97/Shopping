@@ -24,7 +24,7 @@ import com.jask.shopping.presentation.screens.login_screen.GoogleAuthUiClient
 import com.jask.shopping.presentation.screens.login_screen.LoginScreen
 import com.jask.shopping.presentation.screens.login_screen.LoginViewModel
 import com.jask.shopping.presentation.screens.register_screen.RegisterScreen
-import com.jask.shopping.presentation.screens.register_screen.RegisterViewmodel
+import com.jask.shopping.presentation.screens.register_screen.RegisterViewModel
 import com.jask.shopping.ui.theme.ShoppingTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -107,7 +107,7 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = Screens.RegisterScreen.route) {
 
-                        val registerViewModel: RegisterViewmodel = hiltViewModel()
+                        val registerViewModel: RegisterViewModel = hiltViewModel()
                         val state = registerViewModel.state.value
 
                         RegisterScreen(state = state,

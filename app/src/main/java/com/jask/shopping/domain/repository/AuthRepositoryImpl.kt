@@ -3,7 +3,10 @@ package com.jask.shopping.domain.repository
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.jask.shopping.util.RegisterValidation
 import com.jask.shopping.util.Resource
+import com.jask.shopping.util.validateEmail
+import com.jask.shopping.util.validatePassword
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -25,6 +28,7 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
     }
 
     override fun registerUser(email: String, password: String): Flow<Resource<AuthResult>> {
+
         return flow {
             emit(Resource.Loading())
             val result = firebaseAuth.createUserWithEmailAndPassword(
