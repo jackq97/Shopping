@@ -40,6 +40,20 @@ fun RegisterScreen(
     var lastName by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var emailValidationError by rememberSaveable { mutableStateOf(false) }
+    var emailErrorText by rememberSaveable { mutableStateOf("") }
+    var passwordValidationError by rememberSaveable { mutableStateOf(false) }
+    var passwordErrorText by rememberSaveable { mutableStateOf("") }
+
+    if (state.emailRegisterValidation is RegisterValidation.Failed){
+        emailValidationError = true
+        emailErrorText = state.emailRegisterValidation.message
+    }
+
+    if (state.passwordRegisterValidation is RegisterValidation.Failed){
+        passwordValidationError = true
+        passwordErrorText = state.passwordRegisterValidation.message
+    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(verticalArrangement = Arrangement.Center,
@@ -66,14 +80,18 @@ fun RegisterScreen(
             OutlinedTextField(value = email,
                 label = { Text(text = "Email")},
                 onValueChange = { email = it },
-                isError = true,
-                supportingText = { Text(text = "this is an error")})
+                isError = emailValidationError,
+                supportingText = {if (emailValidationError)
+                    Text(text = emailErrorText)
+                 })
 
             OutlinedTextField(value = password,
                 label = { Text(text = "password")},
                 onValueChange = { password = it },
-                isError = true,
-                supportingText = { Text(text = "this is an error")})
+                isError = passwordValidationError,
+                supportingText = {if (passwordValidationError)
+                    Text(text = passwordErrorText)
+                })
             
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -81,6 +99,8 @@ fun RegisterScreen(
                 CircularProgressIndicator()
             } else {
                 Button(onClick = {
+                    emailValidationError = false
+                    passwordValidationError = false
                     if (firstName.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                         Log.d("register screen ", " Registered ")
                         onEvent(RegisterEvents.CreateAccountWithEmailAndPassword(

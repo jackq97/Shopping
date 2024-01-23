@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jask.shopping.domain.repository.AuthRepository
-import com.jask.shopping.util.RegisterFieldsState
 import com.jask.shopping.util.RegisterValidation
 import com.jask.shopping.util.Resource
 import com.jask.shopping.util.validateEmail
@@ -26,35 +25,35 @@ class RegisterViewModel @Inject constructor (
 
     private fun registerUser(email: String, password: String) = viewModelScope.launch {
 
-        if (checkValidation(email, password)) {
-            repository.registerUser(email = email, password = password).collect { result ->
-                when (result) {
+        repository.registerUser(email = email, password = password).collect { result ->
+            when (result) {
 
-                    is Resource.Loading -> {
-                        _state.value = _state.value.copy(isLoading = true)
-                    }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(isLoading = true)
+                }
 
-                    is Resource.Success -> {
-                        _state.value = _state.value.copy(isSuccess = "Sign Up Success")
-                        _state.value = _state.value.copy(isLoading = false)
-                        Log.d("viewModel", "registerUser: success")
-                    }
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(isSuccess = "Sign Up Success")
+                    _state.value = _state.value.copy(isLoading = false)
+                    Log.d("viewModel", "registerUser: success")
+                }
 
-                    is Resource.Error -> {
-                        _state.value = _state.value.copy(isError = result.message)
-                    }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(isError = result.message)
                 }
             }
-        } else {
-            _state.value = _state.value.copy( emailRegisterValidation = validateEmail(email = email) )
-            _state.value = _state.value.copy( passwordRegisterValidation = validatePassword(password = password) )
         }
     }
 
     fun onEvent(event: RegisterEvents) {
         when (event){
             is RegisterEvents.CreateAccountWithEmailAndPassword -> {
-                registerUser(email = event.email, password = event.password)
+                if (checkValidation(event.email, event.password)) {
+                    registerUser(email = event.email, password = event.password)
+                } else {
+                    _state.value = _state.value.copy( emailRegisterValidation = validateEmail(email = event.email) )
+                    _state.value = _state.value.copy( passwordRegisterValidation = validatePassword(password = event.password) )
+                }
             }
         }
     }
