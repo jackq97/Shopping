@@ -6,6 +6,6 @@ data class RegisterStates(
     val isLoading: Boolean = false,
     val isSuccess: String? = "",
     val isError: String? = "",
-    val emailRegisterValidation: RegisterValidation = RegisterValidation.Success,
-    val passwordRegisterValidation: RegisterValidation = RegisterValidation.Success ,
+    val emailRegisterValidation: RegisterValidation = RegisterValidation.RegisterSuccess,
+    val passwordRegisterValidation: RegisterValidation = RegisterValidation.RegisterSuccess,
 )

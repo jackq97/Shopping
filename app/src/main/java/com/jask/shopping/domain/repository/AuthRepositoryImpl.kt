@@ -47,6 +47,14 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
         }
     }
 
+    override suspend fun sendPasswordResetEmail(email: String): Flow<Resource<AuthResult>> {
+        return flow {
+            emit(Resource.Loading())
+            val result = firebaseAuth.sendPasswordResetEmail(email).await()
+            emit(Resource.Success(result))
+        }
+    }
+
     override fun googleSignOut() {
         firebaseAuth.signOut()
     }

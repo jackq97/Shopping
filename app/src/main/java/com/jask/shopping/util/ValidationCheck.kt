@@ -11,7 +11,7 @@ fun validateEmail(email: String): RegisterValidation{
         return RegisterValidation.Failed("Wrong email format")
     }
 
-    return RegisterValidation.Success
+    return RegisterValidation.RegisterSuccess
 }
 
 fun validatePassword(password: String): RegisterValidation{
@@ -21,5 +21,5 @@ fun validatePassword(password: String): RegisterValidation{
     if (password.length < 6)
         return RegisterValidation.Failed("Password should contain 6 characters")
 
-    return RegisterValidation.Success
+    return RegisterValidation.RegisterSuccess
 }

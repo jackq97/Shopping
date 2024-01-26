@@ -61,7 +61,7 @@ class RegisterViewModel @Inject constructor (
     private fun checkValidation(email: String, password: String): Boolean {
         val emailValidation = validateEmail(email)
         val passwordValidation = validatePassword(password)
-        return emailValidation is RegisterValidation.Success &&
-                passwordValidation is RegisterValidation.Success
+        return emailValidation is RegisterValidation.RegisterSuccess &&
+                passwordValidation is RegisterValidation.RegisterSuccess
     }
 }

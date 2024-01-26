@@ -1,7 +1,7 @@
 package com.jask.shopping.util
 
 sealed class RegisterValidation(){
-    data object Success: RegisterValidation()
+    data object RegisterSuccess: RegisterValidation()
     data class Failed(val message: String): RegisterValidation()
 }
 
