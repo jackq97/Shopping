@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth)
@@ -47,11 +48,14 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
         }
     }
 
-    override suspend fun sendPasswordResetEmail(email: String): Flow<Resource<AuthResult>> {
+    override suspend fun sendPasswordResetEmail(email: String): Flow<Resource<Unit>> {
         return flow {
-            emit(Resource.Loading())
-            val result = firebaseAuth.sendPasswordResetEmail(email).await()
-            emit(Resource.Success(result))
+            try {
+                firebaseAuth.sendPasswordResetEmail(email)
+                emit(Resource.Success(Unit))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "An error occurred"))
+            }
         }
     }
 

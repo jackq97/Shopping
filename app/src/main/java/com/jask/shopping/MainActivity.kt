@@ -55,8 +55,8 @@ class MainActivity : ComponentActivity() {
 
                     composable(route = Screens.LoginScreen.route) {
 
-                        val viewModel: LoginViewModel = hiltViewModel()
-                        val state = viewModel.state.value
+                        val loginViewModel: LoginViewModel = hiltViewModel()
+                        val state = loginViewModel.state.value
 
                         LaunchedEffect(key1 = Unit) {
                             if(googleAuthUiClient.getSignedInUser() != null) {
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                                         val signInResult = googleAuthUiClient.signInWithIntent(
                                             intent = result.data ?: return@launch
                                         )
-                                        viewModel.onSignInResult(signInResult)
+                                        loginViewModel.onSignInResult(signInResult)
                                     }
                                 }
                             }
@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                                 ).show()
 
                                 navController.navigate(Screens.HomeScreen.route)
-                                viewModel.resetState()
+                                loginViewModel.resetState()
                             }
                         }
 

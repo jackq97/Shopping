@@ -9,9 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,14 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.navigation.Screens
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
                 navController: NavController,
                 state: LoginState,
-                onSignInClick: () -> Unit
+                onSignInClick: () -> Unit,
+                onEvent: (LoginEvents) -> Unit
                 ){
 
 
@@ -47,24 +55,39 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    var resetEmail by rememberSaveable { mutableStateOf("") }
+
     if (showBottomSheet) {
         ModalBottomSheet(
-            modifier = Modifier.height(300.dp),
+            modifier = Modifier.wrapContentSize(),
             onDismissRequest = {
                 showBottomSheet = false
             },
             sheetState = sheetState
         ) {
+
             // Sheet content
-            Button(onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        showBottomSheet = false
-                    }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                
+                Spacer(modifier = Modifier.width(8.dp))
+
+                    OutlinedTextField(
+                        modifier = Modifier.weight(7f),
+                        value = resetEmail,
+                        label = { Text(text = "Email")},
+                        shape = RoundedCornerShape(16.dp),
+                        onValueChange = { resetEmail = it })
+
+                IconButton(
+                    modifier = Modifier
+                        .weight(1.5f),
+                    onClick = { /*TODO*/ }) {
+                    Icon(imageVector = Icons.Default.Send, contentDescription = "send")
                 }
-            }) {
-                Text("Hide bottom sheet")
             }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
         }
     }
 
@@ -142,6 +165,7 @@ fun LoginScreen(
 fun LoginScreenPreview(){
 LoginScreen(navController = rememberNavController(),
     state = LoginState(),
-    onSignInClick = {})
+    onSignInClick = {},
+    onEvent = {})
 }
 

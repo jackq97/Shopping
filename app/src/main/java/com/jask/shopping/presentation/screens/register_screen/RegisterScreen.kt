@@ -35,7 +35,6 @@ import com.jask.shopping.navigation.Screens
 import com.jask.shopping.util.RegisterValidation
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     state: RegisterStates,
