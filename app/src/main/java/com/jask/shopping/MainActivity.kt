@@ -102,8 +102,9 @@ class MainActivity : ComponentActivity() {
                                         ).build()
                                     )
                                 }
-                            }
-                        ) }
+                            },
+                            onEvent = loginViewModel::onEvent,
+                            ) }
 
                     composable(route = Screens.RegisterScreen.route) {
 

@@ -48,14 +48,13 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
         }
     }
 
-    override suspend fun sendPasswordResetEmail(email: String): Flow<Resource<Unit>> {
-        return flow {
-            try {
-                firebaseAuth.sendPasswordResetEmail(email)
-                emit(Resource.Success(Unit))
-            } catch (e: Exception) {
-                emit(Resource.Error(e.message ?: "An error occurred"))
-            }
+    override fun sendPasswordResetEmail(email: String): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading())
+        try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "An error occurred"))
         }
     }
 

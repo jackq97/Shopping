@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.navigation.Screens
+import com.jask.shopping.presentation.screens.register_screen.RegisterEvents
+import com.jask.shopping.util.RegisterValidation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,10 +55,16 @@ fun LoginScreen(
 
 
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var resetEmail by rememberSaveable { mutableStateOf("") }
+    var emailErrorText by rememberSaveable { mutableStateOf("") }
+    var emailValidationError by rememberSaveable { mutableStateOf(false) }
+
+    if (state.emailRegisterValidation is RegisterValidation.Failed){
+        emailValidationError = true
+        emailErrorText = state.emailRegisterValidation.message
+    }
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -76,13 +85,29 @@ fun LoginScreen(
                         value = resetEmail,
                         label = { Text(text = "Email")},
                         shape = RoundedCornerShape(16.dp),
+                        isError = emailValidationError,
+                        supportingText = {if (emailValidationError)
+                            Text(text = emailErrorText)
+                        },
                         onValueChange = { resetEmail = it })
 
-                IconButton(
-                    modifier = Modifier
-                        .weight(1.5f),
-                    onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = "send")
+                if (state.isLoading){
+                    CircularProgressIndicator()
+                } else {
+                    IconButton(
+                        modifier = Modifier
+                            .weight(1.5f),
+                        onClick = {
+                            if (resetEmail.isNotEmpty()) {
+                                onEvent(
+                                    LoginEvents.SendPasswordResetEmail(email = resetEmail)
+                                )
+                            } else {
+                                TODO()
+                            }
+                        }) {
+                        Icon(imageVector = Icons.Default.Send, contentDescription = "send")
+                    }
                 }
             }
 
