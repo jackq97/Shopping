@@ -4,7 +4,7 @@ import com.jask.shopping.util.RegisterValidation
 
 data class LoginState(
     val isLoading: Boolean = false,
-    val isSuccess: String? = "",
+    val isSuccess: Boolean = false,
     val isError: String? = "",
     val isSignInSuccessful: Boolean = false,
     val signInError: String? = null,

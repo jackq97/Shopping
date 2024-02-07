@@ -66,6 +66,10 @@ fun LoginScreen(
         emailErrorText = state.emailRegisterValidation.message
     }
 
+    if (state.isSuccess){
+        showBottomSheet = false
+    }
+
     if (showBottomSheet) {
         ModalBottomSheet(
             modifier = Modifier.wrapContentSize(),
@@ -103,7 +107,7 @@ fun LoginScreen(
                                     LoginEvents.SendPasswordResetEmail(email = resetEmail)
                                 )
                             } else {
-                                TODO()
+                                TODO("show dialog when field is empty")
                             }
                         }) {
                         Icon(imageVector = Icons.Default.Send, contentDescription = "send")

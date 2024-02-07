@@ -32,7 +32,7 @@ class LoginViewModel @Inject constructor(private val repository: AuthRepository)
                 }
                 is Resource.Success -> {
                     _state.value = _state.value.copy(isLoading = false)
-                    _state.value = _state.value.copy(isSuccess = "Reset email sent successfully")
+                    _state.value = _state.value.copy(isSuccess = true)
                     Log.d("viewModel", "Reset email: Success")
                 }
                 is Resource.Error -> {
