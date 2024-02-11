@@ -27,9 +27,10 @@ fun BottomNavigationBar(
 ){
 
     val items = listOf(
-        BottomNavigationItem.TimerSettingScreen,
-        BottomNavigationItem.SettingsScreen,
-        BottomNavigationItem.InfoScreen)
+        BottomNavigationItem.HomeFeedScreen,
+        BottomNavigationItem.SearchScreen,
+        BottomNavigationItem.CartScreen,
+        BottomNavigationItem.ProfileScreen)
 
     var selectedItem by remember { mutableIntStateOf(0) }
 
@@ -50,7 +51,7 @@ fun BottomNavigationBar(
                         modifier = Modifier.padding(0.dp),
                         icon = {
                             Icon(
-                                imageVector = item.icon,
+                                painterResource(id = item.icon),
                                 contentDescription = item.title
                             )
                         },
