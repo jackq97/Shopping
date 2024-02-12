@@ -69,6 +69,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("androidx.compose.material3:material3:1.2.0")
+
 
     //Navigation component
     val naVersion = "2.7.6"
@@ -81,7 +83,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.46.1")
 
     //navigation
-    implementation ("androidx.navigation:navigation-compose:2.7.6")
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
     //Firebase
