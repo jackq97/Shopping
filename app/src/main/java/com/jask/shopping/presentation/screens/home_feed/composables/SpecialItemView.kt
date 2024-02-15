@@ -15,23 +15,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jask.shopping.R
 
 @Composable
 fun SpecialItemView(){
@@ -43,69 +42,78 @@ fun SpecialItemView(){
     ) {
 
         Column {
-            Card(modifier = Modifier
-                .width(270.dp)
-                .height(180.dp)) {
-                Row() {
-                    Image(
+
+            TopProductView()
+            ProductView()
+            BestDealsView()
+        }
+    }
+}
+
+@Composable
+fun TopProductView(){
+    Card(modifier = Modifier
+        .padding(start = 10.dp)
+        .width(270.dp)
+        .height(180.dp)) {
+        Row() {
+            Image(
+                modifier = Modifier
+                    .weight(1.5f)
+                    .fillMaxSize(),
+                imageVector = Icons.Default.Add,
+                contentDescription = null
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()
+            ) {
+                IconButton(
+                    modifier = Modifier.align(Alignment.End),
+                    onClick = { /*TODO*/ }) {
+                    Icon(painterResource(id = R.drawable.favorite), contentDescription = "")
+                }
+
+                Text(
+                    maxLines = 2,
+                    text = "Scotch Premium",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = "$1000",
+                    style = MaterialTheme.typography.labelLarge,
+                )
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Button(
                         modifier = Modifier
-                            .weight(1.5f)
-                            .fillMaxSize(),
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    ) {
-                        IconButton(
-                            modifier = Modifier.align(Alignment.End),
-                            onClick = { /*TODO*/ }) {
-                            Icon(imageVector = Icons.Default.CheckCircle, contentDescription = "")
-                        }
-
+                            .padding(bottom = 2.dp, end = 5.dp)
+                            .align(Alignment.BottomEnd)
+                            .fillMaxWidth(),
+                        contentPadding = PaddingValues(0.dp),
+                        onClick = { /*TODO*/ }) {
                         Text(
-                            maxLines = 2,
-                            text = "Scotch Premium",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            maxLines = 1,
+                            text = "Add to Cart"
                         )
-
-                        Text(
-                            modifier = Modifier.padding(top = 10.dp),
-                            text = "$1000",
-                                    style = MaterialTheme.typography.labelLarge,
-                        )
-
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Button(
-                                modifier = Modifier
-                                    .padding(bottom = 2.dp, end = 5.dp)
-                                    .align(Alignment.BottomEnd)
-                                    .fillMaxWidth(),
-                                    contentPadding = PaddingValues(0.dp),
-                                onClick = { /*TODO*/ }) {
-                                Text(
-                                    maxLines = 1,
-                                    text = "Add to Cart"
-                                )
-                            }
-                        }
                     }
                 }
             }
-
-            ProductView()
         }
     }
 }
 
 @Composable
 fun ProductView(){
+
     Row(modifier = Modifier
-        .fillMaxWidth()
+        .padding(start = 10.dp)
+        .width(350.dp)
         .height(100.dp)
     ) {
 
@@ -156,6 +164,64 @@ fun ProductView(){
         }
     }
 }
+@Composable
+fun BestDealsView(){
+    Card(modifier = Modifier
+        .padding(start = 10.dp)
+        .width(150.dp)
+        .height(170.dp)
+    ) {
+
+        Column {
+
+            Image(
+                modifier = Modifier
+                    .weight(7f)
+                    .fillMaxSize(),
+                imageVector = Icons.Default.Add,
+                contentDescription = "")
+
+            Row(modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()) {
+
+                Text(
+                    modifier = Modifier
+                        .weight(7f)
+                        .padding(start = 10.dp),
+                    text = "Chair")
+
+                IconButton(
+                    modifier = Modifier.weight(3f),
+                    onClick = { /*TODO*/ }) {
+                    Icon(painterResource(id = R.drawable.favorite), contentDescription = "")
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    modifier = Modifier.padding(start = 10.dp),
+                    text = "$1600",
+                    style = MaterialTheme.typography.labelMedium
+                )
+
+                Text(
+                    modifier = Modifier.padding(start = 10.dp),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.labelMedium,
+                    text = "$2000")
+            }
+        }
+    }
+}
+
 
 @Preview
 @Composable
