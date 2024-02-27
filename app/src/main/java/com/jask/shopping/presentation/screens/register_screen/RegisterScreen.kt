@@ -1,7 +1,6 @@
 package com.jask.shopping.presentation.screens.register_screen
 
 import android.util.Log
-import android.widget.ProgressBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,18 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +27,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.navigation.Screens
 import com.jask.shopping.util.RegisterValidation
-import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
@@ -50,8 +43,6 @@ fun RegisterScreen(
     var emailErrorText by rememberSaveable { mutableStateOf("") }
     var passwordValidationError by rememberSaveable { mutableStateOf(false) }
     var passwordErrorText by rememberSaveable { mutableStateOf("") }
-
-
 
     if (state.emailRegisterValidation is RegisterValidation.Failed){
     emailValidationError = true
@@ -79,9 +70,13 @@ fun RegisterScreen(
                 label = { Text(text = "First Name")},
                 onValueChange = { firstName = it })
 
+            Spacer(modifier = Modifier.height(17.dp))
+
             OutlinedTextField(value = lastName,
                 label = { Text(text = "Last Name")},
                 onValueChange = { lastName = it })
+
+            Spacer(modifier = Modifier.height(18.dp))
 
             OutlinedTextField(value = email,
                 label = { Text(text = "Email")},

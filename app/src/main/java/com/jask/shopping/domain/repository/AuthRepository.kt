@@ -2,6 +2,7 @@ package com.jask.shopping.domain.repository
 
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
+import com.jask.shopping.data.model.Product
 import com.jask.shopping.util.Resource
 import kotlinx.coroutines.flow.Flow
 

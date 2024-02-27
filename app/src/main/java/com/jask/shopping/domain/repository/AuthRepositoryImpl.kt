@@ -3,6 +3,8 @@ package com.jask.shopping.domain.repository
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.jask.shopping.data.model.Product
 import com.jask.shopping.util.RegisterValidation
 import com.jask.shopping.util.Resource
 import com.jask.shopping.util.validateEmail
@@ -14,8 +16,7 @@ import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth)
-    : AuthRepository  {
+class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth) : AuthRepository  {
 
     override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {
         return flow {

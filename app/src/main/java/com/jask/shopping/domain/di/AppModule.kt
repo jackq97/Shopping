@@ -1,6 +1,8 @@
 package com.jask.shopping.domain.di
 
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 import com.jask.shopping.domain.repository.AuthRepository
 import com.jask.shopping.domain.repository.AuthRepositoryImpl
 import dagger.Module
@@ -22,5 +24,9 @@ object AppModule {
     fun providesRepositoryImpl(firebaseAuth: FirebaseAuth): AuthRepository {
         return AuthRepositoryImpl(firebaseAuth)
     }
+
+    @Singleton
+    @Provides
+    fun providesFirebaseFireStoreDatabase() = Firebase.firestore
 
 }
