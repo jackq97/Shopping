@@ -1,5 +1,6 @@
 package com.jask.shopping.domain.repository
 
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -12,11 +13,15 @@ import com.jask.shopping.util.validatePassword
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth) : AuthRepository  {
+class AuthRepositoryImpl @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
+) : AuthRepository  {
 
     override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {
         return flow {
@@ -63,4 +68,20 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
         firebaseAuth.signOut()
     }
 
+    override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val result = firestore.collection("Products")
+                .whereEqualTo("category", "Special Products")
+                .get()
+                .await()
+
+            val specialProductList = result.toObjects(Product::class.java)
+            emit(Resource.Success(specialProductList))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
     }
+
+
+}

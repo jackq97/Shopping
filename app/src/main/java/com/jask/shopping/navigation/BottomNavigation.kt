@@ -1,16 +1,16 @@
 package com.jask.shopping.navigation
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jask.shopping.presentation.screens.cart_screen.CartScreen
 import com.jask.shopping.presentation.screens.home_feed.HomeFeedScreen
+import com.jask.shopping.presentation.screens.home_feed.HomeFeedViewModel
 import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BackPressHandler
 import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BottomNavigationItem
 import com.jask.shopping.presentation.screens.profile_screen.ProfileScreen
@@ -29,10 +29,18 @@ fun MyBottomNavigation(
         startDestination = BottomNavigationItem.HomeFeedScreen.route
     ) {
 
+
         //bottom bar
         composable(route = BottomNavigationItem.HomeFeedScreen.route){
+
+            val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()
+            val state = homeFeedViewModel.state.value
+
             BackPressHandler(onBackPressed = {})
-            HomeFeedScreen()
+            HomeFeedScreen(
+                state = state,
+                onEvent = homeFeedViewModel::onEvent
+            )
         }
 
         composable(route = BottomNavigationItem.SearchScreen.route){

@@ -19,16 +19,12 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.jask.shopping.navigation.Screens
 import com.jask.shopping.presentation.screens.LoginRegisterScreen
-import com.jask.shopping.presentation.screens.cart_screen.CartScreen
 import com.jask.shopping.presentation.screens.home_screen.HomeScreen
-import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BottomNavigationItem
 import com.jask.shopping.presentation.screens.login_screen.GoogleAuthUiClient
 import com.jask.shopping.presentation.screens.login_screen.LoginScreen
 import com.jask.shopping.presentation.screens.login_screen.LoginViewModel
-import com.jask.shopping.presentation.screens.profile_screen.ProfileScreen
 import com.jask.shopping.presentation.screens.register_screen.RegisterScreen
 import com.jask.shopping.presentation.screens.register_screen.RegisterViewModel
-import com.jask.shopping.presentation.screens.search_screen.SearchScreen
 import com.jask.shopping.ui.theme.ShoppingTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

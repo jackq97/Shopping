@@ -1,12 +1,11 @@
 package com.jask.shopping.presentation.screens.home_feed
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -35,12 +34,16 @@ import com.jask.shopping.R
 import com.jask.shopping.presentation.screens.home_feed.composables.BestDealsView
 import com.jask.shopping.presentation.screens.home_feed.composables.ProductView
 import com.jask.shopping.presentation.screens.home_feed.composables.TopProductView
+import com.jask.shopping.presentation.screens.register_screen.RegisterEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeFeedScreen(){
+fun HomeFeedScreen(
+    state: HomeFeedStates,
+    onEvent: (HomeFeedEvents) -> Unit
+){
 
-    var state by remember { mutableIntStateOf(0) }
+    var selectedTabState by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
     val titles = listOf("Main","Chair","Cupboard","Accessory","")
 
@@ -67,13 +70,13 @@ fun HomeFeedScreen(){
             ) {}
 
             ScrollableTabRow(
-                selectedTabIndex = state,
+                selectedTabIndex = selectedTabState,
                 edgePadding = 0.dp
             ) {
                 titles.forEachIndexed { index, title ->
                     Tab(
-                        selected = state == index,
-                        onClick = { state = index },
+                        selected = selectedTabState == index,
+                        onClick = { selectedTabState = index },
                         text = {
                             Text(
                                 text = title
@@ -83,15 +86,11 @@ fun HomeFeedScreen(){
                 }
             }
 
-            HomeFeedLazyRow {
-                TopProductView()
-                TopProductView()
-                TopProductView()
-            }
+            HomeFeedSpecialProductLazyRow(state = state)
 
             DealsDividedText(text = "Best Deals")
 
-            HomeFeedLazyRow {
+            HomeFeedTestLazyRow {
                 ProductView()
                 ProductView()
                 ProductView()
@@ -99,7 +98,7 @@ fun HomeFeedScreen(){
 
             DealsDividedText(text = "Best Products")
 
-            HomeFeedLazyRow {
+            HomeFeedTestLazyRow {
                 BestDealsView()
                 BestDealsView()
                 BestDealsView()
@@ -110,12 +109,32 @@ fun HomeFeedScreen(){
 }
 
 @Composable
-fun HomeFeedLazyRow(
-    content: @Composable() () -> Unit
+fun HomeFeedSpecialProductLazyRow(
+    state: HomeFeedStates
 ){
     LazyRow(modifier = Modifier
         .padding(10.dp),
     ) {
+
+        items(items = state.specialProduct!!) { data ->
+
+            TopProductView(
+                imageUrl = data.images.toString(),
+                title = data.name,
+                price = data.price.toString()
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeFeedTestLazyRow(
+    content: @Composable () -> Unit
+){
+    LazyRow(modifier = Modifier
+        .padding(10.dp),
+    ) {
+
         item {
             content()
         }
@@ -138,5 +157,7 @@ fun DealsDividedText(
 @Preview(showBackground = true)
 @Composable
 fun HomeFeedScreenPreview(){
-    HomeFeedScreen()
+    HomeFeedScreen(
+        state = HomeFeedStates(),
+        onEvent = {})
 }

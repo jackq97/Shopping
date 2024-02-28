@@ -43,7 +43,9 @@ fun SpecialItemView(){
 
         Column {
 
-            TopProductView()
+            TopProductView(imageUrl = "Bristol",
+                title = "Bernabe",
+                price = "Tamira")
             ProductView()
             BestDealsView()
         }
@@ -51,7 +53,11 @@ fun SpecialItemView(){
 }
 
 @Composable
-fun TopProductView(){
+fun TopProductView(
+    imageUrl: String,
+    title: String,
+    price: String
+){
     Card(modifier = Modifier
         .padding(start = 10.dp)
         .width(270.dp)
@@ -78,14 +84,14 @@ fun TopProductView(){
 
                 Text(
                     maxLines = 2,
-                    text = "Scotch Premium",
+                    text = title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
-                    text = "$1000",
+                    text = price,
                     style = MaterialTheme.typography.labelLarge,
                 )
 
