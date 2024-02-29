@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.jask.shopping.R
 
 @Composable
@@ -63,12 +64,13 @@ fun TopProductView(
         .width(270.dp)
         .height(180.dp)) {
         Row() {
-            Image(
+
+            AsyncImage(
                 modifier = Modifier
                     .weight(1.5f)
                     .fillMaxSize(),
-                imageVector = Icons.Default.Add,
-                contentDescription = null
+                model = imageUrl,
+                contentDescription = null,
             )
 
             Column(

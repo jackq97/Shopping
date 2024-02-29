@@ -29,6 +29,10 @@ class HomeFeedViewModel @Inject constructor(
     private var _state = mutableStateOf(HomeFeedStates())
     val state: State<HomeFeedStates> = _state
 
+    init {
+        getSpecialItem()
+    }
+
     private fun getSpecialItem() = viewModelScope.launch {
 
         repository.getSpecialProducts().collect { result ->
@@ -38,12 +42,14 @@ class HomeFeedViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _state.value = _state.value.copy(specialProduct = result.data)
+
                     //_state.value = _state.value.copy(isLoading = false)
                     //state.value = _state.value.copy(isSuccess = true)
-                    Log.d("viewModel", "data get success")
+                    Log.d("viewModel", "data get success ${result.data?.first()?.category} ")
                 }
                 is Resource.Error -> {
                     //_state.value = _state.value.copy(isError = result.message)
+                    Log.d("viewModel", "data get failed")
                 }
             }
         }
@@ -52,7 +58,7 @@ class HomeFeedViewModel @Inject constructor(
     fun onEvent(event: HomeFeedEvents) {
         when (event){
             is HomeFeedEvents.GetSpecialProductData -> {
-                getSpecialItem()
+
             }
         }
     }

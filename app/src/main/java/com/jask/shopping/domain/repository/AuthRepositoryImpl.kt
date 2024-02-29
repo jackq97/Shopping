@@ -1,5 +1,6 @@
 package com.jask.shopping.domain.repository
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
@@ -72,12 +73,13 @@ class AuthRepositoryImpl @Inject constructor(
         emit(Resource.Loading())
         try {
             val result = firestore.collection("Products")
-                .whereEqualTo("category", "Special Products")
+                .whereEqualTo("category", "special item")
                 .get()
                 .await()
 
             val specialProductList = result.toObjects(Product::class.java)
             emit(Resource.Success(specialProductList))
+            Log.d("viewModel", "data get success ${specialProductList.first().category} ")
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }

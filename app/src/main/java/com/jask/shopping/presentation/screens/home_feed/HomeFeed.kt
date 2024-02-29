@@ -119,7 +119,7 @@ fun HomeFeedSpecialProductLazyRow(
         items(items = state.specialProduct!!) { data ->
 
             TopProductView(
-                imageUrl = data.images.toString(),
+                imageUrl = data.images[0],
                 title = data.name,
                 price = data.price.toString()
             )
