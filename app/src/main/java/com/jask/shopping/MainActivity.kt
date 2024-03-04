@@ -1,6 +1,7 @@
 package com.jask.shopping
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,6 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
@@ -44,11 +49,19 @@ class MainActivity : ComponentActivity() {
             ShoppingTheme {
 
                 val navController = rememberNavController()
+                var startDestination by remember { mutableStateOf(Screens.LoginRegisterScreen.route) }
+
+                if(googleAuthUiClient.getSignedInUser() != null) {
+                    //navController.navigate(Screens.HomeScreen.route)
+                    startDestination = Screens.HomeScreen.route
+                }
+
+                Log.d("main", "onCreate: $startDestination")
 
                 NavHost(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
                     navController = navController,
-                    startDestination = Screens.LoginRegisterScreen.route
+                    startDestination = startDestination
                 ) {
                     composable(route = Screens.LoginRegisterScreen.route) {
                         LoginRegisterScreen(navController = navController) }
@@ -58,11 +71,12 @@ class MainActivity : ComponentActivity() {
                         val loginViewModel: LoginViewModel = hiltViewModel()
                         val state = loginViewModel.state.value
 
-                        LaunchedEffect(key1 = Unit) {
-                            if(googleAuthUiClient.getSignedInUser() != null) {
-                                navController.navigate(Screens.HomeScreen.route)
-                            }
-                        }
+                        /*LaunchedEffect(key1 = Unit) {
+                            *//*if(googleAuthUiClient.getSignedInUser() != null) {
+                                //navController.navigate(Screens.HomeScreen.route)
+                                startDestination = Screens.HomeScreen.route
+                            }*//*
+                        }*/
 
                         val launcher = rememberLauncherForActivityResult(
                             contract = ActivityResultContracts.StartIntentSenderForResult(),

@@ -1,12 +1,21 @@
 package com.jask.shopping.presentation.screens.home_feed
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -35,7 +44,6 @@ import com.jask.shopping.R
 import com.jask.shopping.presentation.screens.home_feed.composables.BestDealsView
 import com.jask.shopping.presentation.screens.home_feed.composables.ProductView
 import com.jask.shopping.presentation.screens.home_feed.composables.TopProductView
-import com.jask.shopping.presentation.screens.register_screen.RegisterEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,20 +62,29 @@ fun HomeFeedScreen(
     Surface(modifier = Modifier.fillMaxSize()) {
 
         Column(
-            modifier = Modifier.verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        ) {
             SearchBar(
                 query = searchText,//text showed on SearchBar
                 onQueryChange = {}, //update the value of searchText
                 onSearch = {}, //the callback to be invoked when the input service triggers the ImeAction.Search action
                 active = isSearching, //whether the user is searching or not
-                onActiveChange = {  }, //the callback to be invoked when this search bar's active state is changed
+                onActiveChange = { }, //the callback to be invoked when this search bar's active state is changed
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null) },
-                trailingIcon = { Icon(painterResource(id = R.drawable.mic) , contentDescription = null) }
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        painterResource(id = R.drawable.mic),
+                        contentDescription = null
+                    )
+                }
             ) {}
 
             ScrollableTabRow(
@@ -87,16 +104,15 @@ fun HomeFeedScreen(
                 }
             }
 
-            HomeFeedSpecialProductLazyRow(state = state)
-
-            DealsDividedText(text = "Best Deals")
-
-            HomeFeedBestDealsProductLazyRow(state = state)
-
-            DealsDividedText(text = "Best Products")
+//            HomeFeedSpecialProductLazyRow(state = state)
+//
+//            DealsDividedText(text = "Best Deals")
+//
+//            HomeFeedBestDealsProductLazyRow(state = state)
+//
+//            DealsDividedText(text = "Best Products")
 
             HomeFeedBestProductLazyRow(state = state)
-
         }
     }
 }
@@ -141,21 +157,27 @@ fun HomeFeedBestDealsProductLazyRow(
 
 @Composable
 fun HomeFeedBestProductLazyRow(
-    state: HomeFeedStates
-){
-    LazyRow(modifier = Modifier
-        .padding(10.dp),
-    ) {
+    state: HomeFeedStates){
 
-        items(items = state.bestProducts!!) { data ->
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = Modifier
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        content = {
 
-            BestDealsView(
-                imageUrl = data.images[0],
-                title = data.name,
-                price = data.price.toString()
-            )
+            items(count = state.bestProducts?.size!!) { index ->
+
+                val data = state.bestProducts
+
+                BestDealsView(
+                    imageUrl = data[index].images[0],
+                    title = data[index].name,
+                    price = data[index].price.toString()
+                )
+            }
         }
-    }
+    )
 }
 
 @Composable

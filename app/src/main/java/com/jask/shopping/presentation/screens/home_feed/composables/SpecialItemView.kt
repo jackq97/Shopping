@@ -25,7 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,13 +65,14 @@ fun TopProductView(
         .padding(start = 10.dp)
         .width(270.dp)
         .height(180.dp)) {
-        Row() {
+        Row {
 
             AsyncImage(
                 modifier = Modifier
                     .weight(1.5f)
                     .fillMaxSize(),
                 model = imageUrl,
+                contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
 
@@ -77,6 +80,7 @@ fun TopProductView(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxSize()
+                    .padding(start = 8.dp)
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.End),
@@ -132,14 +136,18 @@ fun ProductView(
         AsyncImage(
             modifier = Modifier
                 .weight(0.8f)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clip(RoundedCornerShape(10.dp)),
             model = imageUrl,
             contentDescription = null)
 
         Column(modifier = Modifier
             .fillMaxSize()
             .weight(1f)
-            .padding(top = 18.dp),
+            .padding(
+                top = 18.dp,
+                start = 10.dp
+            ),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
@@ -184,7 +192,9 @@ fun BestDealsView(
     price: String
 ){
     Card(modifier = Modifier
-        .padding(start = 10.dp)
+        .padding(
+            horizontal = 3.dp,
+            vertical = 10.dp)
         .width(150.dp)
         .height(170.dp)
     ) {
@@ -196,6 +206,7 @@ fun BestDealsView(
                     .weight(7f)
                     .fillMaxSize(),
                 model = imageUrl,
+                contentScale = ContentScale.Crop,
                 contentDescription = "")
 
             Row(modifier = Modifier
