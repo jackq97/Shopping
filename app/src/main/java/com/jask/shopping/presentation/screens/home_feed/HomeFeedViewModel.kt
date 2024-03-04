@@ -31,6 +31,8 @@ class HomeFeedViewModel @Inject constructor(
 
     init {
         getSpecialItem()
+        getBestDealItem()
+        getBestProductItem()
     }
 
     private fun getSpecialItem() = viewModelScope.launch {
@@ -42,6 +44,50 @@ class HomeFeedViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     _state.value = _state.value.copy(specialProduct = result.data)
+
+                    //_state.value = _state.value.copy(isLoading = false)
+                    //state.value = _state.value.copy(isSuccess = true)
+                    Log.d("viewModel", "data get success ${result.data?.first()?.category} ")
+                }
+                is Resource.Error -> {
+                    //_state.value = _state.value.copy(isError = result.message)
+                    Log.d("viewModel", "data get failed")
+                }
+            }
+        }
+    }
+
+    private fun getBestDealItem() = viewModelScope.launch {
+
+        repository.getBestDeals().collect { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    //_state.value = _state.value.copy(isLoading = true)
+                }
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(bestDeals = result.data)
+
+                    //_state.value = _state.value.copy(isLoading = false)
+                    //state.value = _state.value.copy(isSuccess = true)
+                    Log.d("viewModel", "data get success ${result.data?.first()?.category} ")
+                }
+                is Resource.Error -> {
+                    //_state.value = _state.value.copy(isError = result.message)
+                    Log.d("viewModel", "data get failed")
+                }
+            }
+        }
+    }
+
+    private fun getBestProductItem() = viewModelScope.launch {
+
+        repository.getBestProducts().collect { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    //_state.value = _state.value.copy(isLoading = true)
+                }
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(bestProducts = result.data)
 
                     //_state.value = _state.value.copy(isLoading = false)
                     //state.value = _state.value.copy(isSuccess = true)

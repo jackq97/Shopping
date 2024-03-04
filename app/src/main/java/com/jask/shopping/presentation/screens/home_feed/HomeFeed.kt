@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -90,19 +91,11 @@ fun HomeFeedScreen(
 
             DealsDividedText(text = "Best Deals")
 
-            HomeFeedTestLazyRow {
-                ProductView()
-                ProductView()
-                ProductView()
-            }
+            HomeFeedBestDealsProductLazyRow(state = state)
 
             DealsDividedText(text = "Best Products")
 
-            HomeFeedTestLazyRow {
-                BestDealsView()
-                BestDealsView()
-                BestDealsView()
-            }
+            HomeFeedBestProductLazyRow(state = state)
 
         }
     }
@@ -128,15 +121,39 @@ fun HomeFeedSpecialProductLazyRow(
 }
 
 @Composable
-fun HomeFeedTestLazyRow(
-    content: @Composable () -> Unit
+fun HomeFeedBestDealsProductLazyRow(
+    state: HomeFeedStates
 ){
     LazyRow(modifier = Modifier
         .padding(10.dp),
     ) {
 
-        item {
-            content()
+        items(items = state.bestDeals!!) { data ->
+
+            ProductView(
+                imageUrl = data.images[0],
+                title = data.name,
+                price = data.price.toString()
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeFeedBestProductLazyRow(
+    state: HomeFeedStates
+){
+    LazyRow(modifier = Modifier
+        .padding(10.dp),
+    ) {
+
+        items(items = state.bestProducts!!) { data ->
+
+            BestDealsView(
+                imageUrl = data.images[0],
+                title = data.name,
+                price = data.price.toString()
+            )
         }
     }
 }

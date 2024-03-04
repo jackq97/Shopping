@@ -79,7 +79,36 @@ class AuthRepositoryImpl @Inject constructor(
 
             val specialProductList = result.toObjects(Product::class.java)
             emit(Resource.Success(specialProductList))
-            Log.d("viewModel", "data get success ${specialProductList.first().category} ")
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun getBestDeals(): Flow<Resource<List<Product>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val result = firestore.collection("Products")
+                .whereEqualTo("category", "best deals")
+                .get()
+                .await()
+
+            val specialProductList = result.toObjects(Product::class.java)
+            emit(Resource.Success(specialProductList))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun getBestProducts(): Flow<Resource<List<Product>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val result = firestore.collection("Products")
+                .whereEqualTo("category", "best products")
+                .get()
+                .await()
+
+            val specialProductList = result.toObjects(Product::class.java)
+            emit(Resource.Success(specialProductList))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }

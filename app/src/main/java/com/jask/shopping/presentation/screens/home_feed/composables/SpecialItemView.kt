@@ -47,8 +47,8 @@ fun SpecialItemView(){
             TopProductView(imageUrl = "Bristol",
                 title = "Bernabe",
                 price = "Tamira")
-            ProductView()
-            BestDealsView()
+            ProductView(imageUrl = "Megan", title = "Ligia", price = "Leopoldo")
+            BestDealsView(imageUrl = "Audrie", title = "Elizabet", price = "Marilu")
         }
     }
 }
@@ -117,7 +117,11 @@ fun TopProductView(
 }
 
 @Composable
-fun ProductView(){
+fun ProductView(
+    imageUrl: String,
+    title: String,
+    price: String
+){
 
     Row(modifier = Modifier
         .padding(start = 10.dp)
@@ -125,11 +129,12 @@ fun ProductView(){
         .height(100.dp)
     ) {
 
-        Image(
+        AsyncImage(
             modifier = Modifier
                 .weight(0.8f)
                 .fillMaxSize(),
-            imageVector = Icons.Default.Add, contentDescription = "")
+            model = imageUrl,
+            contentDescription = null)
 
         Column(modifier = Modifier
             .fillMaxSize()
@@ -139,13 +144,13 @@ fun ProductView(){
             horizontalAlignment = Alignment.Start
         ) {
 
-            Text(text = "Scotch Premium",
+            Text(text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold)
 
             Row {
 
-                Text(text = "$1600",
+                Text(text = price,
                     style = MaterialTheme.typography.labelMedium
                 )
 
@@ -173,7 +178,11 @@ fun ProductView(){
     }
 }
 @Composable
-fun BestDealsView(){
+fun BestDealsView(
+    imageUrl: String,
+    title: String,
+    price: String
+){
     Card(modifier = Modifier
         .padding(start = 10.dp)
         .width(150.dp)
@@ -182,11 +191,11 @@ fun BestDealsView(){
 
         Column {
 
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .weight(7f)
                     .fillMaxSize(),
-                imageVector = Icons.Default.Add,
+                model = imageUrl,
                 contentDescription = "")
 
             Row(modifier = Modifier
@@ -197,7 +206,7 @@ fun BestDealsView(){
                     modifier = Modifier
                         .weight(7f)
                         .padding(start = 10.dp),
-                    text = "Chair")
+                    text = title)
 
                 IconButton(
                     modifier = Modifier.weight(3f),
@@ -216,7 +225,7 @@ fun BestDealsView(){
 
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
-                    text = "$1600",
+                    text = price,
                     style = MaterialTheme.typography.labelMedium
                 )
 
