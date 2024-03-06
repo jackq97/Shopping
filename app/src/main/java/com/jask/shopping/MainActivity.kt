@@ -1,7 +1,6 @@
 package com.jask.shopping
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -52,11 +51,8 @@ class MainActivity : ComponentActivity() {
                 var startDestination by remember { mutableStateOf(Screens.LoginRegisterScreen.route) }
 
                 if(googleAuthUiClient.getSignedInUser() != null) {
-                    //navController.navigate(Screens.HomeScreen.route)
                     startDestination = Screens.HomeScreen.route
                 }
-
-                Log.d("main", "onCreate: $startDestination")
 
                 NavHost(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -70,13 +66,6 @@ class MainActivity : ComponentActivity() {
 
                         val loginViewModel: LoginViewModel = hiltViewModel()
                         val state = loginViewModel.state.value
-
-                        /*LaunchedEffect(key1 = Unit) {
-                            *//*if(googleAuthUiClient.getSignedInUser() != null) {
-                                //navController.navigate(Screens.HomeScreen.route)
-                                startDestination = Screens.HomeScreen.route
-                            }*//*
-                        }*/
 
                         val launcher = rememberLauncherForActivityResult(
                             contract = ActivityResultContracts.StartIntentSenderForResult(),

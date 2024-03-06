@@ -62,9 +62,10 @@ fun TopProductView(
     price: String
 ){
     Card(modifier = Modifier
-        .padding(start = 10.dp)
         .width(270.dp)
-        .height(180.dp)) {
+        .height(180.dp)
+        .padding(end = 12.dp)) {
+
         Row {
 
             AsyncImage(
@@ -128,9 +129,9 @@ fun ProductView(
 ){
 
     Row(modifier = Modifier
-        .padding(start = 10.dp)
         .width(350.dp)
         .height(100.dp)
+        .padding(end = 12.dp)
     ) {
 
         AsyncImage(
@@ -192,11 +193,13 @@ fun BestDealsView(
     price: String
 ){
     Card(modifier = Modifier
-        .padding(
-            horizontal = 3.dp,
-            vertical = 10.dp)
         .width(150.dp)
         .height(170.dp)
+        .padding(
+            end = 12.dp,
+            top = 14.dp,
+
+        )
     ) {
 
         Column {

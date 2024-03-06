@@ -1,23 +1,14 @@
 package com.jask.shopping.presentation.screens.home_feed
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,7 +44,6 @@ fun HomeFeedScreen(
 ){
 
     var selectedTabState by remember { mutableIntStateOf(0) }
-    val scrollState = rememberScrollState()
     val titles = listOf("Main","Chair","Cupboard","Accessory","")
 
     val isSearching by remember { mutableStateOf(false) }
@@ -61,9 +51,8 @@ fun HomeFeedScreen(
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column{
+
             SearchBar(
                 query = searchText,//text showed on SearchBar
                 onQueryChange = {}, //update the value of searchText
@@ -103,16 +92,42 @@ fun HomeFeedScreen(
                     )
                 }
             }
+            
+            
+            LazyVerticalGrid(
+                modifier = Modifier.padding(
+                    start = 12.dp,
+                    top = 12.dp
+                ),
+                columns = GridCells.Fixed(2)) {
 
-//            HomeFeedSpecialProductLazyRow(state = state)
-//
-//            DealsDividedText(text = "Best Deals")
-//
-//            HomeFeedBestDealsProductLazyRow(state = state)
-//
-//            DealsDividedText(text = "Best Products")
+                item(span = {GridItemSpan(maxCurrentLineSpan)}) {
+                    HomeFeedSpecialProductLazyRow(state = state)
+                }
 
-            HomeFeedBestProductLazyRow(state = state)
+                item(span = {GridItemSpan(maxCurrentLineSpan)}) {
+                    DealsDividedText(text = "Best Deals")
+                }
+
+                item(span = {GridItemSpan(maxCurrentLineSpan)}) {
+                    HomeFeedBestDealsProductLazyRow(state = state)
+                }
+
+                item(span = {GridItemSpan(maxCurrentLineSpan)}) {
+                    DealsDividedText(text = "Best Products")
+                }
+
+                items(count = state.bestProducts?.size!!) { index ->
+
+                    val data = state.bestProducts
+
+                    BestDealsView(
+                        imageUrl = data[index].images[0],
+                        title = data[index].name,
+                        price = data[index].price.toString()
+                    )
+                }
+            }
         }
     }
 }
@@ -121,8 +136,7 @@ fun HomeFeedScreen(
 fun HomeFeedSpecialProductLazyRow(
     state: HomeFeedStates
 ){
-    LazyRow(modifier = Modifier
-        .padding(10.dp),
+    LazyRow(modifier = Modifier,
     ) {
 
         items(items = state.specialProduct!!) { data ->
@@ -140,8 +154,7 @@ fun HomeFeedSpecialProductLazyRow(
 fun HomeFeedBestDealsProductLazyRow(
     state: HomeFeedStates
 ){
-    LazyRow(modifier = Modifier
-        .padding(10.dp),
+    LazyRow(modifier = Modifier,
     ) {
 
         items(items = state.bestDeals!!) { data ->
@@ -156,41 +169,19 @@ fun HomeFeedBestDealsProductLazyRow(
 }
 
 @Composable
-fun HomeFeedBestProductLazyRow(
-    state: HomeFeedStates){
-
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        modifier = Modifier
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        content = {
-
-            items(count = state.bestProducts?.size!!) { index ->
-
-                val data = state.bestProducts
-
-                BestDealsView(
-                    imageUrl = data[index].images[0],
-                    title = data[index].name,
-                    price = data[index].price.toString()
-                )
-            }
-        }
-    )
-}
-
-@Composable
 fun DealsDividedText(
     text: String
 ){
-    Text(
+    Column(
         modifier = Modifier
-            .padding(10.dp),
-        text = text,
-        style = MaterialTheme.typography.headlineMedium,
-        fontWeight = FontWeight.Bold
-    )
+            .padding(vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+        )
+    }
 }
 
 @Preview(showBackground = true)
