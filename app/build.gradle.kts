@@ -97,4 +97,8 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+    //paging compose
+    //Paging Compose
+    implementation ("androidx.paging:paging-compose:3.2.1")
+
 }

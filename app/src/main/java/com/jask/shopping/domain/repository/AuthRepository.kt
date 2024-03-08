@@ -1,5 +1,6 @@
 package com.jask.shopping.domain.repository
 
+import androidx.paging.PagingData
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.jask.shopping.data.model.Product
@@ -15,4 +16,6 @@ interface AuthRepository{
     fun getSpecialProducts(): Flow<Resource<List<Product>>>
     fun getBestDeals(): Flow<Resource<List<Product>>>
     fun getBestProducts(): Flow<Resource<List<Product>>>
+
+    fun getPaginatedBestProducts(): Flow<PagingData<Product>>
 }

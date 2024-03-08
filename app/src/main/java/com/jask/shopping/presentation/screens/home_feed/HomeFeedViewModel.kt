@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.cachedIn
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObjects
 import com.jask.shopping.data.model.Product
@@ -28,6 +29,8 @@ class HomeFeedViewModel @Inject constructor(
 
     private var _state = mutableStateOf(HomeFeedStates())
     val state: State<HomeFeedStates> = _state
+
+    val products = repository.getPaginatedBestProducts().cachedIn(viewModelScope)
 
     init {
         getSpecialItem()

@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.jask.shopping.presentation.screens.cart_screen.CartScreen
 import com.jask.shopping.presentation.screens.home_feed.HomeFeedScreen
 import com.jask.shopping.presentation.screens.home_feed.HomeFeedViewModel
@@ -35,11 +36,13 @@ fun MyBottomNavigation(
 
             val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()
             val state = homeFeedViewModel.state.value
+            val pagingProducts = homeFeedViewModel.products.collectAsLazyPagingItems()
 
             BackPressHandler(onBackPressed = {})
             HomeFeedScreen(
                 state = state,
-                onEvent = homeFeedViewModel::onEvent
+                onEvent = homeFeedViewModel::onEvent,
+                pagingProducts = pagingProducts
             )
         }
 

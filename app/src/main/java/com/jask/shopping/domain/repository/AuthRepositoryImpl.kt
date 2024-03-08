@@ -2,11 +2,15 @@ package com.jask.shopping.domain.repository
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jask.shopping.data.model.Product
+import com.jask.shopping.data.model.paging.ProductsPagingSource
 import com.jask.shopping.util.RegisterValidation
 import com.jask.shopping.util.Resource
 import com.jask.shopping.util.validateEmail
@@ -21,7 +25,9 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val config: PagingConfig,
+    private val source: ProductsPagingSource
 ) : AuthRepository  {
 
     override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {
@@ -113,6 +119,12 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
     }
+
+    override fun getPaginatedBestProducts() = Pager(
+    config = config
+    ) {
+        source
+    }.flow
 
 
 }
