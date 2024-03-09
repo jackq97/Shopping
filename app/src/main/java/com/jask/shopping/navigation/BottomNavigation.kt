@@ -36,13 +36,11 @@ fun MyBottomNavigation(
 
             val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()
             val state = homeFeedViewModel.state.value
-            val pagingProducts = homeFeedViewModel.products.collectAsLazyPagingItems()
 
             BackPressHandler(onBackPressed = {})
             HomeFeedScreen(
                 state = state,
-                onEvent = homeFeedViewModel::onEvent,
-                pagingProducts = pagingProducts
+                onEvent = homeFeedViewModel::onEvent
             )
         }
 

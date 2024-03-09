@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,18 +34,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.jask.shopping.R
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.presentation.screens.home_feed.composables.BestDealsView
-import com.jask.shopping.presentation.screens.home_feed.composables.ProductView
 import com.jask.shopping.presentation.screens.home_feed.composables.TopProductView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeFeedScreen(
     state: HomeFeedStates,
-    onEvent: (HomeFeedEvents) -> Unit,
-    pagingProducts: LazyPagingItems<Product>
+    onEvent: (HomeFeedEvents) -> Unit
 ){
 
     var selectedTabState by remember { mutableIntStateOf(0) }
@@ -55,9 +53,18 @@ fun HomeFeedScreen(
     val isSearching by remember { mutableStateOf(false) }
     val searchText by remember { mutableStateOf("Search now") }
 
+    val pagingSpecialProducts = state.specialProduct.collectAsLazyPagingItems()
+    val pagingBestProducts = state.bestProducts.collectAsLazyPagingItems()
+    val pagingBestDeals = state.bestDeals.collectAsLazyPagingItems()
+
+    val refresh = pagingBestProducts.loadState.refresh
+    val append = pagingBestProducts.loadState.append
+
+
+
     Surface(modifier = Modifier.fillMaxSize()) {
 
-        pagingProducts.loadState.apply {
+        pagingBestProducts.loadState.apply {
             when {
                 refresh is LoadState.Loading -> ProgressBar()
                 refresh is LoadState.Error -> print(refresh)
@@ -117,7 +124,7 @@ fun HomeFeedScreen(
                 columns = GridCells.Fixed(2)) {
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
-                    HomeFeedSpecialProductLazyRow(state = state)
+                    HomeFeedSpecialProductLazyRow(specialProducts = pagingSpecialProducts)
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
@@ -125,19 +132,19 @@ fun HomeFeedScreen(
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
-                    HomeFeedBestDealsProductLazyRow(state = state)
+                    HomeFeedBestDealsProductLazyRow(bestDeals = pagingBestDeals)
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
                     DealsDividedText(text = "Best Products")
                 }
 
-                items(count = pagingProducts.itemCount) { index ->
+                items(count = pagingBestProducts.itemCount) { index ->
 
                     BestDealsView(
-                        imageUrl = pagingProducts[index]!!.images[0],
-                        title = pagingProducts[index]!!.name,
-                        price = pagingProducts[index]!!.price.toString()
+                        imageUrl = pagingBestProducts[index]!!.images[0],
+                        title = pagingBestProducts[index]!!.name,
+                        price = pagingBestProducts[index]!!.price.toString()
                     )
                 }
             }
@@ -156,43 +163,39 @@ fun ProgressBar() {
 }
 
 @Composable
+fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>) {
+    LazyRow(modifier = Modifier,
+    ) {
+
+        items(count = bestDeals.itemCount){index ->
+            TopProductView(
+                imageUrl = bestDeals[index]!!.images[0],
+                title = bestDeals[index]!!.name,
+                price = bestDeals[index]!!.price.toString()
+            )
+        }
+    }
+}
+
+@Composable
 fun HomeFeedSpecialProductLazyRow(
-    state: HomeFeedStates
+    specialProducts: LazyPagingItems<Product>
 ){
     LazyRow(modifier = Modifier,
     ) {
 
-        items(items = state.specialProduct!!) { data ->
+        items(count = specialProducts.itemCount){index ->
 
             TopProductView(
-                imageUrl = data.images[0],
-                title = data.name,
-                price = data.price.toString()
+                imageUrl = specialProducts[index]!!.images[0],
+                title = specialProducts[index]!!.name,
+                price = specialProducts[index]!!.price.toString()
             )
         }
     }
 }
 
-@Composable
-fun HomeFeedBestDealsProductLazyRow(
-    state: HomeFeedStates
-){
-    LazyRow(modifier = Modifier,
-    ) {
-
-        items(items = state.bestDeals!!) { data ->
-
-            ProductView(
-                imageUrl = data.images[0],
-                title = data.name,
-                price = data.price.toString()
-            )
-        }
-    }
-}
-
-@Composable
-fun DealsDividedText(
+@Composable fun DealsDividedText(
     text: String
 ){
     Column(
@@ -210,8 +213,8 @@ fun DealsDividedText(
 @Preview(showBackground = true)
 @Composable
 fun HomeFeedScreenPreview(){
-  /*  HomeFeedScreen(
+    HomeFeedScreen(
         state = HomeFeedStates(),
-        onEvent = {}, pagingProducts = {}
-    )*/
+        onEvent = {}
+    )
 }

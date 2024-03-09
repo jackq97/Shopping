@@ -5,20 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.cachedIn
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObjects
-import com.jask.shopping.data.model.Product
 import com.jask.shopping.domain.repository.AuthRepository
-import com.jask.shopping.presentation.screens.login_screen.LoginEvents
-import com.jask.shopping.presentation.screens.register_screen.RegisterStates
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import com.jask.shopping.util.Resource
-import com.jask.shopping.util.validateEmail
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,15 +20,16 @@ class HomeFeedViewModel @Inject constructor(
     private var _state = mutableStateOf(HomeFeedStates())
     val state: State<HomeFeedStates> = _state
 
-    val products = repository.getPaginatedBestProducts().cachedIn(viewModelScope)
-
     init {
-        getSpecialItem()
+        _state.value = _state.value.copy(specialProduct = repository.getPaginatedSpecialProducts().cachedIn(viewModelScope))
+        _state.value = _state.value.copy(bestProducts = repository.getPaginatedBestProducts().cachedIn(viewModelScope))
+        _state.value = _state.value.copy(bestDeals = repository.getPaginatedBestDeals().cachedIn(viewModelScope))
+        /*getSpecialItem()
         getBestDealItem()
-        getBestProductItem()
+        getBestProductItem()*/
     }
 
-    private fun getSpecialItem() = viewModelScope.launch {
+    /*private fun getSpecialItem() = viewModelScope.launch {
 
         repository.getSpecialProducts().collect { result ->
             when (result) {
@@ -58,9 +49,9 @@ class HomeFeedViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
-    private fun getBestDealItem() = viewModelScope.launch {
+    /*private fun getBestDealItem() = viewModelScope.launch {
 
         repository.getBestDeals().collect { result ->
             when (result) {
@@ -102,7 +93,7 @@ class HomeFeedViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
     fun onEvent(event: HomeFeedEvents) {
         when (event){

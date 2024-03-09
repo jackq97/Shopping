@@ -30,8 +30,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val source: ProductsPagingSource
 ) : AuthRepository  {
 
-    override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {
-        return flow {
+    override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {return flow {
             emit(Resource.Loading())
             val result = firebaseAuth.signInWithEmailAndPassword(
                 email, password).await()
@@ -75,9 +74,30 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
+    override fun getPaginatedSpecialProducts() = Pager(
+        config = config
+    ) {
+        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
+            .whereEqualTo("category", "special item"))
+    }.flow
+
+    override fun getPaginatedBestDeals() = Pager(
+        config = config
+    ) {
+        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
+            .whereEqualTo("category", "best deals"))
+    }.flow
+
+    override fun getPaginatedBestProducts() = Pager(
+        config = config
+    ) {
+        source
+    }.flow
+
+    /*override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
         try {
+
             val result = firestore.collection("Products")
                 .whereEqualTo("category", "special item")
                 .get()
@@ -118,13 +138,5 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
-    }
-
-    override fun getPaginatedBestProducts() = Pager(
-    config = config
-    ) {
-        source
-    }.flow
-
-
+    }*/
 }
