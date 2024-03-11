@@ -99,4 +99,8 @@ dependencies {
 
     //Paging Compose
     implementation ("androidx.paging:paging-compose:3.2.1")
+
+    //pager accompanist
+    implementation ("com.google.accompanist:accompanist-pager:0.23.1")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.23.1")
 }

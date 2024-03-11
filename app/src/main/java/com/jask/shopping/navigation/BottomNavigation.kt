@@ -14,6 +14,7 @@ import com.jask.shopping.presentation.screens.home_feed.HomeFeedScreen
 import com.jask.shopping.presentation.screens.home_feed.HomeFeedViewModel
 import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BackPressHandler
 import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BottomNavigationItem
+import com.jask.shopping.presentation.screens.product_view_screen.ProductViewScreen
 import com.jask.shopping.presentation.screens.profile_screen.ProfileScreen
 import com.jask.shopping.presentation.screens.search_screen.SearchScreen
 
@@ -27,7 +28,7 @@ fun MyBottomNavigation(
     NavHost(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = BottomNavigationItem.HomeFeedScreen.route
+        startDestination = Screens.ProductViewScreen.route
     ) {
 
 
@@ -57,6 +58,11 @@ fun MyBottomNavigation(
         composable(route = BottomNavigationItem.ProfileScreen.route){
             BackPressHandler(onBackPressed = {})
             ProfileScreen()
+        }
+
+        composable(route = Screens.ProductViewScreen.route){
+            BackPressHandler(onBackPressed = {})
+            ProductViewScreen()
         }
     }
 }
