@@ -1,6 +1,7 @@
 package com.jask.shopping
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -94,9 +95,11 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        LoginScreen(navController = navController,
+                        LoginScreen(
+                            navController = navController,
                             state = state,
                             onSignInClick = {
+                                Log.d("TAG", "onCreate: sign in google")
                                 lifecycleScope.launch {
                                     val signInIntentSender = googleAuthUiClient.signIn()
                                     launcher.launch(
@@ -107,7 +110,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             onEvent = loginViewModel::onEvent,
-                            ) }
+                        ) }
 
                     composable(route = Screens.RegisterScreen.route) {
 

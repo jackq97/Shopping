@@ -103,7 +103,8 @@ fun ProductViewScreen() {
                 )
             }
 
-            Row(
+            Row(modifier = Modifier
+                .padding(top = 8.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -124,7 +125,7 @@ fun ProductViewScreen() {
 
             Divider(color = Color.Gray)
 
-            Row {
+            Row(modifier = Modifier.padding(top = 40.dp)) {
                 ColorsInfoColumn(
                     modifier = Modifier.weight(1f),
                     listOfColors = listOfColors)
@@ -135,6 +136,10 @@ fun ProductViewScreen() {
                     modifier = Modifier.weight(1f),
                     listOfSizes = listOfSizes)
             }
+
+
+
+            Spacer(modifier = Modifier.weight(1f))
 
 
             Button(

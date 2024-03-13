@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.navigation.Screens
-import com.jask.shopping.presentation.screens.register_screen.RegisterEvents
 import com.jask.shopping.util.RegisterValidation
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,7 +108,7 @@ fun LoginScreen(
                                 TODO("show dialog when field is empty")
                             }
                         }) {
-                        Icon(imageVector = Icons.Default.Send, contentDescription = "send")
+                        Icon(imageVector = Icons.Default.Check, contentDescription = "send")
                     }
                 }
             }
