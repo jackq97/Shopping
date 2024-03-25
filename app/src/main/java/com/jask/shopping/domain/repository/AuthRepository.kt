@@ -13,7 +13,7 @@ interface AuthRepository{
     fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>>
     fun sendPasswordResetEmail(email: String): Flow<Resource<Unit>>
     fun googleSignOut()
-    //fun getSpecialProducts(): Flow<Resource<List<Product>>>
+    fun getSpecialProducts(): Flow<Resource<List<Product>>>
     //fun getBestDeals(): Flow<Resource<List<Product>>>
     //fun getBestProducts(): Flow<Resource<List<Product>>>
     fun getPaginatedBestProducts(): Flow<PagingData<Product>>

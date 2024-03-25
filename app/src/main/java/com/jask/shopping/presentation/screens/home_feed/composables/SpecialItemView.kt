@@ -1,7 +1,7 @@
 package com.jask.shopping.presentation.screens.home_feed.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -32,8 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.jask.shopping.R
+import com.jask.shopping.navigation.Screens
 
 @Composable
 fun SpecialItemView(){
@@ -45,12 +46,21 @@ fun SpecialItemView(){
     ) {
 
         Column {
-
             TopProductView(imageUrl = "Bristol",
                 title = "Bernabe",
-                price = "Tamira")
-            ProductView(imageUrl = "Megan", title = "Ligia", price = "Leopoldo")
-            BestDealsView(imageUrl = "Audrie", title = "Elizabet", price = "Marilu")
+                price = "Tamira",
+                index = 6,
+                navController = rememberNavController())
+
+            ProductView(imageUrl = "Megan",
+                title = "Ligia",
+                price = "Leopoldo",
+                navController = rememberNavController())
+
+            BestDealsView(imageUrl = "Audrie",
+                title = "Elizabet",
+                price = "Marilu",
+                navController = rememberNavController())
         }
     }
 }
@@ -59,12 +69,17 @@ fun SpecialItemView(){
 fun TopProductView(
     imageUrl: String,
     title: String,
-    price: String
+    price: String,
+    index: Int,
+    navController: NavController
 ){
     Card(modifier = Modifier
         .width(270.dp)
         .height(180.dp)
-        .padding(end = 12.dp)) {
+        .padding(end = 12.dp)
+        .clickable {
+            navController.navigate("product_view_screen/${index}")
+        }) {
 
         Row {
 
@@ -125,13 +140,17 @@ fun TopProductView(
 fun ProductView(
     imageUrl: String,
     title: String,
-    price: String
+    price: String,
+    navController: NavController
 ){
 
     Row(modifier = Modifier
         .width(350.dp)
         .height(100.dp)
         .padding(end = 12.dp)
+        .clickable {
+            navController.navigate(Screens.ProductViewScreen.route)
+        }
     ) {
 
         AsyncImage(
@@ -190,16 +209,19 @@ fun ProductView(
 fun BestDealsView(
     imageUrl: String,
     title: String,
-    price: String
+    price: String,
+    navController: NavController
 ){
     Card(modifier = Modifier
         .width(150.dp)
         .height(170.dp)
         .padding(
             end = 12.dp,
-            top = 14.dp,
-
+            top = 14.dp
         )
+        .clickable {
+            navController.navigate(Screens.ProductViewScreen.route)
+        }
     ) {
 
         Column {

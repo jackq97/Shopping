@@ -38,26 +38,20 @@ import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ProductViewScreen() {
+fun ProductViewScreen(
+    index: String,
+    state: ProductViewStates,
+    onEvent: (ProductViewStates) -> Unit,
+) {
 
     val pagerState = rememberPagerState()
+
+    val product = state.specialProduct
 
     val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
     val listOfSizes = listOf("XL", "S", "M", "L")
 
-    data class Page(val url: String)
-
-    val pages = listOf(
-        Page("https://cdn.pixabay.com/photo/2014/02/19/20/39/winter-270160_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2019/11/23/03/08/valley-4646114_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2018/11/29/20/01/nature-3846403_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2016/11/19/14/38/camel-1839616_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2014/07/23/00/56/moon-399834_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2019/12/14/18/28/sunrise-4695484_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2018/03/29/07/35/water-3271579_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2021/01/23/13/01/hills-5942468_1280.jpg"),
-        Page("https://cdn.pixabay.com/photo/2019/10/09/20/18/etretat-4538160_1280.jpg"),
-    )
+    val pages: List<String> = product[index.toInt()].images
 
     Surface(
         modifier = Modifier.fillMaxSize()) {
@@ -82,7 +76,7 @@ fun ProductViewScreen() {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             AsyncImage(
-                                model = pages[page].url,
+                                model = pages[page],
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop
                             )
@@ -137,10 +131,7 @@ fun ProductViewScreen() {
                     listOfSizes = listOfSizes)
             }
 
-
-
             Spacer(modifier = Modifier.weight(1f))
-
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
@@ -221,5 +212,9 @@ fun SizeColumnInfo(
 @Composable
 @Preview
 fun ProductViewPreview(){
-    ProductViewScreen()
+    ProductViewScreen(
+        index = "",
+        state = ProductViewStates(),
+        onEvent = {}
+    )
 }

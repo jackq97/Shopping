@@ -32,6 +32,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -44,7 +46,8 @@ import com.jask.shopping.presentation.screens.home_feed.composables.TopProductVi
 @Composable
 fun HomeFeedScreen(
     state: HomeFeedStates,
-    onEvent: (HomeFeedEvents) -> Unit
+    onEvent: (HomeFeedEvents) -> Unit,
+    navController: NavController
 ){
 
     var selectedTabState by remember { mutableIntStateOf(0) }
@@ -124,7 +127,9 @@ fun HomeFeedScreen(
                 columns = GridCells.Fixed(2)) {
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
-                    HomeFeedSpecialProductLazyRow(specialProducts = pagingSpecialProducts)
+                    HomeFeedSpecialProductLazyRow(
+                        specialProducts = pagingSpecialProducts,
+                        navController = navController)
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
@@ -132,7 +137,8 @@ fun HomeFeedScreen(
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
-                    HomeFeedBestDealsProductLazyRow(bestDeals = pagingBestDeals)
+                    HomeFeedBestDealsProductLazyRow(bestDeals = pagingBestDeals,
+                        navController = navController)
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
@@ -144,7 +150,8 @@ fun HomeFeedScreen(
                     BestDealsView(
                         imageUrl = pagingBestProducts[index]!!.images[0],
                         title = pagingBestProducts[index]!!.name,
-                        price = pagingBestProducts[index]!!.price.toString()
+                        price = pagingBestProducts[index]!!.price.toString(),
+                        navController = navController
                     )
                 }
             }
@@ -163,7 +170,9 @@ fun ProgressBar() {
 }
 
 @Composable
-fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>) {
+fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>,
+                                    navController: NavController
+) {
     LazyRow(modifier = Modifier,
     ) {
 
@@ -171,7 +180,9 @@ fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>) {
             TopProductView(
                 imageUrl = bestDeals[index]!!.images[0],
                 title = bestDeals[index]!!.name,
-                price = bestDeals[index]!!.price.toString()
+                price = bestDeals[index]!!.price.toString(),
+                index = index,
+                navController = navController
             )
         }
     }
@@ -179,7 +190,8 @@ fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>) {
 
 @Composable
 fun HomeFeedSpecialProductLazyRow(
-    specialProducts: LazyPagingItems<Product>
+    specialProducts: LazyPagingItems<Product>,
+    navController: NavController
 ){
     LazyRow(modifier = Modifier,
     ) {
@@ -189,7 +201,9 @@ fun HomeFeedSpecialProductLazyRow(
             TopProductView(
                 imageUrl = specialProducts[index]!!.images[0],
                 title = specialProducts[index]!!.name,
-                price = specialProducts[index]!!.price.toString()
+                price = specialProducts[index]!!.price.toString(),
+                index = index,
+                navController = navController
             )
         }
     }
@@ -215,6 +229,7 @@ fun HomeFeedSpecialProductLazyRow(
 fun HomeFeedScreenPreview(){
     HomeFeedScreen(
         state = HomeFeedStates(),
-        onEvent = {}
+        onEvent = {},
+        navController = rememberNavController()
     )
 }

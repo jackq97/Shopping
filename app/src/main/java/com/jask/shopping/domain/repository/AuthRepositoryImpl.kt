@@ -94,7 +94,7 @@ class AuthRepositoryImpl @Inject constructor(
         source
     }.flow
 
-    /*override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
+    override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
         try {
 
@@ -102,7 +102,6 @@ class AuthRepositoryImpl @Inject constructor(
                 .whereEqualTo("category", "special item")
                 .get()
                 .await()
-
             val specialProductList = result.toObjects(Product::class.java)
             emit(Resource.Success(specialProductList))
         } catch (e: Exception) {
@@ -110,7 +109,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getBestDeals(): Flow<Resource<List<Product>>> = flow {
+    /*override fun getBestDeals(): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
         try {
             val result = firestore.collection("Products")
