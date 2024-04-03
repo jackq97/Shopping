@@ -41,107 +41,121 @@ import com.google.accompanist.pager.rememberPagerState
 fun ProductViewScreen(
     index: String,
     state: ProductViewStates,
-    onEvent: (ProductViewStates) -> Unit,
+    onEvent: (String) -> Unit,
 ) {
 
     val pagerState = rememberPagerState()
 
-    val product = state.specialProduct
+    if (state.specialProduct!!.isNotEmpty()) {
 
-    val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
-    val listOfSizes = listOf("XL", "S", "M", "L")
+        val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
+        val listOfSizes = listOf("XL", "S", "M", "L")
 
-    val pages: List<String> = product[index.toInt()].images
+        val pages: List<String> = state.specialProduct!![index.toInt()].images
 
-    Surface(
-        modifier = Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-        Column(modifier = Modifier
-            .background(Color.White)
-            .fillMaxSize()
-            .padding(12.dp)) {
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxSize()
+                    .padding(12.dp)
+            ) {
 
-            Card(modifier = Modifier
-                .height(400.dp)
-                .fillMaxWidth()) {
-                HorizontalPager(
-                    count = pages.size,
-                    state = pagerState,
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.LightGray)
-                ) { page ->
-                    Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                        androidx.compose.material.Surface(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            AsyncImage(
-                                model = pages[page],
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
+                        .height(400.dp)
+                        .fillMaxWidth()
+                ) {
+                    HorizontalPager(
+                        count = pages.size,
+                        state = pagerState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.LightGray)
+                    ) { page ->
+                        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                            androidx.compose.material.Surface(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                AsyncImage(
+                                    model = pages[page],
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)) {
-                HorizontalPagerIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    pagerState = pagerState,
-                    activeColor = Color.Black,
-                    inactiveColor = Color.Gray,
-                    indicatorShape = RoundedCornerShape(size = 2.dp)
-                )
-            }
 
-            Row(modifier = Modifier
-                .padding(top = 8.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    HorizontalPagerIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        pagerState = pagerState,
+                        activeColor = Color.Black,
+                        inactiveColor = Color.Gray,
+                        indicatorShape = RoundedCornerShape(size = 2.dp)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-                Text(
-                    text = "Scotch Premium",
-                    style = MaterialTheme.typography.h4)
+                    Text(
+                        text = "Scotch Premium",
+                        style = MaterialTheme.typography.h4
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        text = "$1200",
+                        style = MaterialTheme.typography.body1,
+                        fontSize = 25.sp
+                    )
+
+                }
+
+                Divider(color = Color.Gray)
+
+                Row(modifier = Modifier.padding(top = 40.dp)) {
+                    ColorsInfoColumn(
+                        modifier = Modifier.weight(1f),
+                        listOfColors = listOfColors
+                    )
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    SizeColumnInfo(
+                        modifier = Modifier.weight(1f),
+                        listOfSizes = listOfSizes
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = "$1200",
-                    style = MaterialTheme.typography.body1,
-                    fontSize = 25.sp
-                )
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(4.dp),
+                    onClick = { /*TODO*/ }) {
+                    Text(
+                        text = "Add To Card",
+                        style = MaterialTheme.typography.button
+                    )
+                }
 
             }
-
-            Divider(color = Color.Gray)
-
-            Row(modifier = Modifier.padding(top = 40.dp)) {
-                ColorsInfoColumn(
-                    modifier = Modifier.weight(1f),
-                    listOfColors = listOfColors)
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                SizeColumnInfo(
-                    modifier = Modifier.weight(1f),
-                    listOfSizes = listOfSizes)
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = { /*TODO*/ }) {
-                Text(text = "Add To Card",
-                style = MaterialTheme.typography.button
-                )
-            }
-
         }
     }
 }

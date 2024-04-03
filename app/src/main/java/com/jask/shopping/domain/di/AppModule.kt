@@ -26,8 +26,6 @@ object AppModule {
         .whereEqualTo("category", "best products")
         .limit(PAGE_SIZE)
 
-
-
     @Provides
     @Singleton
     fun providesFirebaseAuth() = FirebaseAuth.getInstance()
@@ -36,13 +34,11 @@ object AppModule {
     @Provides
     fun providesRepositoryImpl(
         firebaseAuth: FirebaseAuth,
-        source: ProductsPagingSource,
         config: PagingConfig
     ): AuthRepository {
         return AuthRepositoryImpl(
             firebaseAuth,
             firestore = Firebase.firestore,
-            source = source,
             config = config
         )
     }

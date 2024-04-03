@@ -1,7 +1,7 @@
 package com.jask.shopping.presentation.screens.product_view_screen
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class ProductViewViewModel @Inject constructor(private  val repository: AuthRepository)  :ViewModel() {
 
     private val _state = mutableStateOf(ProductViewStates())
-    val state: MutableState<ProductViewStates> = _state
+    val state: State<ProductViewStates> = _state
 
     init {
         getSpecialItem()
@@ -23,17 +23,22 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
 
     private fun getSpecialItem() = viewModelScope.launch {
 
-            repository.getSpecialProducts().collect { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        Log.d("TAG", "getSpecialItem: loading") }
-                    is Resource.Success -> {
-                        _state.value = _state.value.copy(specialProduct = result.data!!)
-                        Log.d("TAG", "getSpecialItem: success")
-                    }
-                    is Resource.Error -> {
-                        Log.d("TAG", "getSpecialItem: error") }
-                    }
+        repository.getSpecialProducts().collect { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(isLoading = true)
+                }
+
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(specialProduct = result.data!!)
+                    _state.value = _state.value.copy(isLoading = false)
+                }
+
+                is Resource.Error -> {
+                    Log.d("TAG", "getSpecialItem: error")
                 }
             }
+        }
+    }
 }
+

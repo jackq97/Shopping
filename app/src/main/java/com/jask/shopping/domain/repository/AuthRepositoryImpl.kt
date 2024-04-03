@@ -1,33 +1,24 @@
 package com.jask.shopping.domain.repository
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.data.model.paging.ProductsPagingSource
-import com.jask.shopping.util.RegisterValidation
 import com.jask.shopping.util.Resource
-import com.jask.shopping.util.validateEmail
-import com.jask.shopping.util.validatePassword
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val config: PagingConfig,
-    private val source: ProductsPagingSource
+    private val config: PagingConfig
 ) : AuthRepository  {
 
     override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {return flow {
@@ -91,13 +82,13 @@ class AuthRepositoryImpl @Inject constructor(
     override fun getPaginatedBestProducts() = Pager(
         config = config
     ) {
-        source
+        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
+            .whereEqualTo("category", "best products"))
     }.flow
 
     override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
         try {
-
             val result = firestore.collection("Products")
                 .whereEqualTo("category", "special item")
                 .get()

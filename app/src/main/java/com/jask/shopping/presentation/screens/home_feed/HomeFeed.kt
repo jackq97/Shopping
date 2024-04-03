@@ -32,8 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -47,7 +45,7 @@ import com.jask.shopping.presentation.screens.home_feed.composables.TopProductVi
 fun HomeFeedScreen(
     state: HomeFeedStates,
     onEvent: (HomeFeedEvents) -> Unit,
-    navController: NavController
+    onClick: (String)-> Unit,
 ){
 
     var selectedTabState by remember { mutableIntStateOf(0) }
@@ -62,8 +60,6 @@ fun HomeFeedScreen(
 
     val refresh = pagingBestProducts.loadState.refresh
     val append = pagingBestProducts.loadState.append
-
-
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -118,7 +114,6 @@ fun HomeFeedScreen(
                 }
             }
             
-            
             LazyVerticalGrid(
                 modifier = Modifier.padding(
                     start = 12.dp,
@@ -129,7 +124,8 @@ fun HomeFeedScreen(
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
                     HomeFeedSpecialProductLazyRow(
                         specialProducts = pagingSpecialProducts,
-                        navController = navController)
+                        onClick = onClick
+                    )
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
@@ -137,8 +133,10 @@ fun HomeFeedScreen(
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
-                    HomeFeedBestDealsProductLazyRow(bestDeals = pagingBestDeals,
-                        navController = navController)
+                    HomeFeedBestDealsProductLazyRow(
+                        bestDeals = pagingBestDeals,
+                        onClick = onClick
+                    )
                 }
 
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
@@ -151,7 +149,8 @@ fun HomeFeedScreen(
                         imageUrl = pagingBestProducts[index]!!.images[0],
                         title = pagingBestProducts[index]!!.name,
                         price = pagingBestProducts[index]!!.price.toString(),
-                        navController = navController
+                        index = index,
+                        onClick = onClick
                     )
                 }
             }
@@ -170,11 +169,11 @@ fun ProgressBar() {
 }
 
 @Composable
-fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>,
-                                    navController: NavController
+fun HomeFeedBestDealsProductLazyRow(
+    bestDeals: LazyPagingItems<Product>,
+    onClick:(String) -> Unit
 ) {
-    LazyRow(modifier = Modifier,
-    ) {
+    LazyRow(modifier = Modifier) {
 
         items(count = bestDeals.itemCount){index ->
             TopProductView(
@@ -182,7 +181,7 @@ fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>,
                 title = bestDeals[index]!!.name,
                 price = bestDeals[index]!!.price.toString(),
                 index = index,
-                navController = navController
+                onClick = onClick
             )
         }
     }
@@ -191,7 +190,7 @@ fun HomeFeedBestDealsProductLazyRow(bestDeals: LazyPagingItems<Product>,
 @Composable
 fun HomeFeedSpecialProductLazyRow(
     specialProducts: LazyPagingItems<Product>,
-    navController: NavController
+    onClick:(String) -> Unit
 ){
     LazyRow(modifier = Modifier,
     ) {
@@ -203,7 +202,7 @@ fun HomeFeedSpecialProductLazyRow(
                 title = specialProducts[index]!!.name,
                 price = specialProducts[index]!!.price.toString(),
                 index = index,
-                navController = navController
+                onClick = onClick
             )
         }
     }
@@ -230,6 +229,6 @@ fun HomeFeedScreenPreview(){
     HomeFeedScreen(
         state = HomeFeedStates(),
         onEvent = {},
-        navController = rememberNavController()
+        onClick = {}
     )
 }

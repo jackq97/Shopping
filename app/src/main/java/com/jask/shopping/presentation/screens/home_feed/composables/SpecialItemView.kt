@@ -30,11 +30,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.jask.shopping.R
-import com.jask.shopping.navigation.Screens
 
 @Composable
 fun SpecialItemView(){
@@ -50,17 +47,20 @@ fun SpecialItemView(){
                 title = "Bernabe",
                 price = "Tamira",
                 index = 6,
-                navController = rememberNavController())
+                onClick = {}
+                )
 
             ProductView(imageUrl = "Megan",
                 title = "Ligia",
                 price = "Leopoldo",
-                navController = rememberNavController())
+                index = 6,
+                onClick = {})
 
-            BestDealsView(imageUrl = "Audrie",
-                title = "Elizabet",
-                price = "Marilu",
-                navController = rememberNavController())
+            BestDealsView(imageUrl = "",
+                title = "",
+                price = "",
+                index = 6,
+                onClick = {})
         }
     }
 }
@@ -71,14 +71,14 @@ fun TopProductView(
     title: String,
     price: String,
     index: Int,
-    navController: NavController
+    onClick: (String)-> Unit,
 ){
     Card(modifier = Modifier
         .width(270.dp)
         .height(180.dp)
         .padding(end = 12.dp)
         .clickable {
-            navController.navigate("product_view_screen/${index}")
+            onClick(index.toString())
         }) {
 
         Row {
@@ -141,7 +141,8 @@ fun ProductView(
     imageUrl: String,
     title: String,
     price: String,
-    navController: NavController
+    index: Int,
+    onClick:(String) -> Unit
 ){
 
     Row(modifier = Modifier
@@ -149,7 +150,7 @@ fun ProductView(
         .height(100.dp)
         .padding(end = 12.dp)
         .clickable {
-            navController.navigate(Screens.ProductViewScreen.route)
+            onClick(index.toString())
         }
     ) {
 
@@ -210,7 +211,8 @@ fun BestDealsView(
     imageUrl: String,
     title: String,
     price: String,
-    navController: NavController
+    index: Int,
+    onClick:(String) -> Unit
 ){
     Card(modifier = Modifier
         .width(150.dp)
@@ -220,7 +222,7 @@ fun BestDealsView(
             top = 14.dp
         )
         .clickable {
-            navController.navigate(Screens.ProductViewScreen.route)
+            onClick(index.toString())
         }
     ) {
 
@@ -274,7 +276,6 @@ fun BestDealsView(
         }
     }
 }
-
 
 @Preview
 @Composable

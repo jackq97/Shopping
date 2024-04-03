@@ -1,5 +1,6 @@
 package com.jask.shopping.navigation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,7 +17,6 @@ import com.jask.shopping.presentation.screens.home_feed.HomeFeedViewModel
 import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BackPressHandler
 import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BottomNavigationItem
 import com.jask.shopping.presentation.screens.product_view_screen.ProductViewScreen
-import com.jask.shopping.presentation.screens.product_view_screen.ProductViewStates
 import com.jask.shopping.presentation.screens.product_view_screen.ProductViewViewModel
 import com.jask.shopping.presentation.screens.profile_screen.ProfileScreen
 import com.jask.shopping.presentation.screens.search_screen.SearchScreen
@@ -34,7 +34,6 @@ fun MyBottomNavigation(
         startDestination = BottomNavigationItem.HomeFeedScreen.route
     ) {
 
-
         //bottom bar
         composable(route = BottomNavigationItem.HomeFeedScreen.route,
             arguments = listOf(
@@ -49,9 +48,11 @@ fun MyBottomNavigation(
             BackPressHandler(onBackPressed = {})
             HomeFeedScreen(
                 state = state,
-                onEvent = homeFeedViewModel::onEvent,
-                navController = navController
-            )
+                onEvent = homeFeedViewModel::onEvent
+            ){index ->
+                Log.d("TAG", "MyBottomNavigation: navigation clicked")
+                navController.navigate("product_view_screen/${index}")
+            }
         }
 
         composable(route = BottomNavigationItem.SearchScreen.route){
@@ -75,11 +76,10 @@ fun MyBottomNavigation(
             val productViewViewModel: ProductViewViewModel = hiltViewModel()
             val state = productViewViewModel.state.value
 
-            ProductViewScreen(index = index!!,
+            ProductViewScreen(
+                index = index!!,
                 state = state,
-                onEvent = {},
-
-            )
+                onEvent = {})
         }
     }
 }
