@@ -38,6 +38,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.jask.shopping.R
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.presentation.screens.home_feed.composables.BestDealsView
+import com.jask.shopping.presentation.screens.home_feed.composables.ProductView
 import com.jask.shopping.presentation.screens.home_feed.composables.TopProductView
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +46,7 @@ import com.jask.shopping.presentation.screens.home_feed.composables.TopProductVi
 fun HomeFeedScreen(
     state: HomeFeedStates,
     onEvent: (HomeFeedEvents) -> Unit,
-    onClick: (String)-> Unit,
+    onClick: (String, String)-> Unit,
 ){
 
     var selectedTabState by remember { mutableIntStateOf(0) }
@@ -169,28 +170,9 @@ fun ProgressBar() {
 }
 
 @Composable
-fun HomeFeedBestDealsProductLazyRow(
-    bestDeals: LazyPagingItems<Product>,
-    onClick:(String) -> Unit
-) {
-    LazyRow(modifier = Modifier) {
-
-        items(count = bestDeals.itemCount){index ->
-            TopProductView(
-                imageUrl = bestDeals[index]!!.images[0],
-                title = bestDeals[index]!!.name,
-                price = bestDeals[index]!!.price.toString(),
-                index = index,
-                onClick = onClick
-            )
-        }
-    }
-}
-
-@Composable
 fun HomeFeedSpecialProductLazyRow(
     specialProducts: LazyPagingItems<Product>,
-    onClick:(String) -> Unit
+    onClick:(String, String) -> Unit
 ){
     LazyRow(modifier = Modifier,
     ) {
@@ -201,6 +183,25 @@ fun HomeFeedSpecialProductLazyRow(
                 imageUrl = specialProducts[index]!!.images[0],
                 title = specialProducts[index]!!.name,
                 price = specialProducts[index]!!.price.toString(),
+                index = index,
+                onClick = onClick
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeFeedBestDealsProductLazyRow(
+    bestDeals: LazyPagingItems<Product>,
+    onClick:(String, String) -> Unit
+) {
+    LazyRow(modifier = Modifier) {
+
+        items(count = bestDeals.itemCount){index ->
+            ProductView(
+                imageUrl = bestDeals[index]!!.images[0],
+                title = bestDeals[index]!!.name,
+                price = bestDeals[index]!!.price.toString(),
                 index = index,
                 onClick = onClick
             )
@@ -229,6 +230,6 @@ fun HomeFeedScreenPreview(){
     HomeFeedScreen(
         state = HomeFeedStates(),
         onEvent = {},
-        onClick = {}
+        onClick = { string1, string2 -> }
     )
 }

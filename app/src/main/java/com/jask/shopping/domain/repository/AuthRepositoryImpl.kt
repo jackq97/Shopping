@@ -65,14 +65,14 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    override fun getPaginatedSpecialProducts() = Pager(
+    override fun getPaginatedSpecialItemProducts() = Pager(
         config = config
     ) {
         ProductsPagingSource(queryProductsByName = firestore.collection("Products")
             .whereEqualTo("category", "special item"))
     }.flow
 
-    override fun getPaginatedBestDeals() = Pager(
+    override fun getPaginatedBestDealsProducts() = Pager(
         config = config
     ) {
         ProductsPagingSource(queryProductsByName = firestore.collection("Products")
@@ -86,19 +86,20 @@ class AuthRepositoryImpl @Inject constructor(
             .whereEqualTo("category", "best products"))
     }.flow
 
-    override fun getSpecialProducts(): Flow<Resource<List<Product>>> = flow {
+    override fun getAllProducts(category: String): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
         try {
             val result = firestore.collection("Products")
-                .whereEqualTo("category", "special item")
+                .whereEqualTo("category", category)
                 .get()
                 .await()
-            val specialProductList = result.toObjects(Product::class.java)
-            emit(Resource.Success(specialProductList))
+            val productList = result.toObjects(Product::class.java)
+            emit(Resource.Success(productList))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
     }
+
 
     /*override fun getBestDeals(): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())

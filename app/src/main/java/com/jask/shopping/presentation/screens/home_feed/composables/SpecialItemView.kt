@@ -47,20 +47,20 @@ fun SpecialItemView(){
                 title = "Bernabe",
                 price = "Tamira",
                 index = 6,
-                onClick = {}
+                onClick = { string1, string2 -> },
                 )
 
             ProductView(imageUrl = "Megan",
                 title = "Ligia",
                 price = "Leopoldo",
                 index = 6,
-                onClick = {})
+                onClick = { string1, string2 -> })
 
             BestDealsView(imageUrl = "",
                 title = "",
                 price = "",
                 index = 6,
-                onClick = {})
+                onClick = { string1, string2 -> })
         }
     }
 }
@@ -71,14 +71,14 @@ fun TopProductView(
     title: String,
     price: String,
     index: Int,
-    onClick: (String)-> Unit,
+    onClick: (String, String)-> Unit,
 ){
     Card(modifier = Modifier
         .width(270.dp)
         .height(180.dp)
         .padding(end = 12.dp)
         .clickable {
-            onClick(index.toString())
+            onClick("special item",index.toString())
         }) {
 
         Row {
@@ -142,7 +142,7 @@ fun ProductView(
     title: String,
     price: String,
     index: Int,
-    onClick:(String) -> Unit
+    onClick:(String, String) -> Unit
 ){
 
     Row(modifier = Modifier
@@ -150,7 +150,7 @@ fun ProductView(
         .height(100.dp)
         .padding(end = 12.dp)
         .clickable {
-            onClick(index.toString())
+            onClick("best deals",index.toString())
         }
     ) {
 
@@ -212,7 +212,7 @@ fun BestDealsView(
     title: String,
     price: String,
     index: Int,
-    onClick:(String) -> Unit
+    onClick:(String, String) -> Unit
 ){
     Card(modifier = Modifier
         .width(150.dp)
@@ -222,7 +222,7 @@ fun BestDealsView(
             top = 14.dp
         )
         .clickable {
-            onClick(index.toString())
+            onClick("best products",index.toString())
         }
     ) {
 

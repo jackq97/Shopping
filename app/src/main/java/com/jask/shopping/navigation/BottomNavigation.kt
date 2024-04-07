@@ -37,10 +37,13 @@ fun MyBottomNavigation(
         //bottom bar
         composable(route = BottomNavigationItem.HomeFeedScreen.route,
             arguments = listOf(
-            navArgument("index"){
-                type = NavType.StringType
-            }
-        )){
+                navArgument("category"){
+                    type = NavType.StringType
+                },
+                navArgument("index"){
+                    type = NavType.StringType
+            })
+        ){
 
             val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()
             val state = homeFeedViewModel.state.value
@@ -49,9 +52,8 @@ fun MyBottomNavigation(
             HomeFeedScreen(
                 state = state,
                 onEvent = homeFeedViewModel::onEvent
-            ){index ->
-                Log.d("TAG", "MyBottomNavigation: navigation clicked")
-                navController.navigate("product_view_screen/${index}")
+            ){category, index ->
+                navController.navigate("product_view_screen/${category}/${index}")
             }
         }
 
@@ -71,15 +73,20 @@ fun MyBottomNavigation(
         }
 
         composable(route = Screens.ProductViewScreen.route){
+
+            val category = it.arguments!!.getString("category")
             val index = it.arguments!!.getString("index")
 
+            Log.d("TAG", "MyBottomNavigation: $category")
+            
             val productViewViewModel: ProductViewViewModel = hiltViewModel()
             val state = productViewViewModel.state.value
 
             ProductViewScreen(
-                index = index!!,
+                category = category,
+                index = index,
                 state = state,
-                onEvent = {})
+                onEvent = productViewViewModel::onEvent)
         }
     }
 }

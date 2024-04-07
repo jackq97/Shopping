@@ -16,10 +16,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,122 +39,130 @@ import com.google.accompanist.pager.rememberPagerState
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductViewScreen(
-    index: String,
+    category: String?,
+    index: String?,
     state: ProductViewStates,
-    onEvent: (String) -> Unit,
-) {
+    onEvent: (ProductViewEvents) -> Unit,
+    ) {
+
+    onEvent(
+        ProductViewEvents.GetProductsByCategory(category = category!!)
+    )
 
     val pagerState = rememberPagerState()
 
-    if (state.specialProduct!!.isNotEmpty()) {
 
-        val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
-        val listOfSizes = listOf("XL", "S", "M", "L")
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
-        val pages: List<String> = state.specialProduct!![index.toInt()].images
-
-        Surface(
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
         ) {
 
-            Column(
-                modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxSize()
-                    .padding(12.dp)
-            ) {
+            if (state.allProducts.isNotEmpty()) {
+            
+            val product = state.allProducts[index!!.toInt()]
+            val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
+            val listOfSizes = listOf("XL", "S", "M", "L")
 
-                Card(
+            val pages: List<String> = product.images
+
+            Card(
+                modifier = Modifier
+                    .height(400.dp)
+                    .fillMaxWidth()
+            ) {
+                HorizontalPager(
+                    count = pages.size,
+                    state = pagerState,
                     modifier = Modifier
-                        .height(400.dp)
-                        .fillMaxWidth()
-                ) {
-                    HorizontalPager(
-                        count = pages.size,
-                        state = pagerState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.LightGray)
-                    ) { page ->
-                        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                            androidx.compose.material.Surface(
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                AsyncImage(
-                                    model = pages[page],
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) { page ->
+                    Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                        androidx.compose.material.Surface(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            AsyncImage(
+                                model = pages[page],
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
                         }
                     }
                 }
+            }
 
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    HorizontalPagerIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        pagerState = pagerState,
-                        activeColor = Color.Black,
-                        inactiveColor = Color.Gray,
-                        indicatorShape = RoundedCornerShape(size = 2.dp)
-                    )
-                }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                HorizontalPagerIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    pagerState = pagerState,
+                    activeColor = MaterialTheme.colorScheme.onBackground,
+                    inactiveColor = Color.Gray,
+                    indicatorShape = RoundedCornerShape(size = 2.dp)
+                )
+            }
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 8.dp),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-                    Text(
-                        text = "Scotch Premium",
-                        style = MaterialTheme.typography.h4
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = "$1200",
-                        style = MaterialTheme.typography.body1,
-                        fontSize = 25.sp
-                    )
-
-                }
-
-                Divider(color = Color.Gray)
-
-                Row(modifier = Modifier.padding(top = 40.dp)) {
-                    ColorsInfoColumn(
-                        modifier = Modifier.weight(1f),
-                        listOfColors = listOfColors
-                    )
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    SizeColumnInfo(
-                        modifier = Modifier.weight(1f),
-                        listOfSizes = listOfSizes
-                    )
-                }
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp),
-                    onClick = { /*TODO*/ }) {
-                    Text(
-                        text = "Add To Card",
-                        style = MaterialTheme.typography.button
-                    )
-                }
+                Text(
+                    text = "$ ${product.price.toInt()}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 25.sp
+                )
+            }
 
+            Divider(
+                modifier = Modifier.padding(top = 5.dp),
+                color = Color.Gray)
+
+            Row(modifier = Modifier.padding(top = 40.dp)) {
+                ColorsInfoColumn(
+                    modifier = Modifier.weight(1f),
+                    listOfColors = listOfColors
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                SizeColumnInfo(
+                    modifier = Modifier.weight(1f),
+                    listOfSizes = listOfSizes
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
+                onClick = { /*TODO*/ }) {
+                Text(
+                    text = "Add To Card",
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
             }
         }
     }
@@ -168,8 +176,9 @@ fun ColorsInfoColumn(
         Text(
             modifier = Modifier.padding(start = 5.dp),
             text = "Color",
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.headlineMedium
         )
+        Spacer(modifier = Modifier.height(4.dp))
         LazyRow {
             items(listOfColors){ colors ->
 
@@ -197,8 +206,9 @@ fun SizeColumnInfo(
         Text(
             modifier = Modifier.padding(start = 5.dp),
             text = "Size",
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.headlineMedium
         )
+        Spacer(modifier = Modifier.height(4.dp))
         LazyRow {
 
             items(listOfSizes){ sizes ->
@@ -229,6 +239,7 @@ fun ProductViewPreview(){
     ProductViewScreen(
         index = "",
         state = ProductViewStates(),
-        onEvent = {}
+        onEvent = {},
+        category = ""
     )
 }
