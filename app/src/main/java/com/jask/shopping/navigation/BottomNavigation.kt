@@ -11,15 +11,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.jask.shopping.presentation.screens.cart_screen.CartScreen
-import com.jask.shopping.presentation.screens.home_feed.HomeFeedScreen
-import com.jask.shopping.presentation.screens.home_feed.HomeFeedViewModel
-import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BackPressHandler
-import com.jask.shopping.presentation.screens.home_screen.composables.bottom_bar.BottomNavigationItem
-import com.jask.shopping.presentation.screens.product_view_screen.ProductViewScreen
-import com.jask.shopping.presentation.screens.product_view_screen.ProductViewViewModel
-import com.jask.shopping.presentation.screens.profile_screen.ProfileScreen
-import com.jask.shopping.presentation.screens.search_screen.SearchScreen
+import com.jask.shopping.screens.cart_screen.CartScreen
+import com.jask.shopping.screens.home_feed.HomeFeedScreen
+import com.jask.shopping.screens.home_feed.HomeFeedViewModel
+import com.jask.shopping.screens.home_screen.composables.bottom_bar.BackPressHandler
+import com.jask.shopping.screens.home_screen.composables.bottom_bar.BottomNavigationItem
+import com.jask.shopping.screens.product_view_screen.ProductViewScreen
+import com.jask.shopping.screens.product_view_screen.ProductViewViewModel
+import com.jask.shopping.screens.profile_screen.ProfileScreen
+import com.jask.shopping.screens.search_screen.SearchScreen
 
 
 @Composable
