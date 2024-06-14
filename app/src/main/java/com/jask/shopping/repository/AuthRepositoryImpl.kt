@@ -1,14 +1,12 @@
 package com.jask.shopping.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.data.paging.ProductsPagingSource
 import com.jask.shopping.util.Constants.PAGE_SIZE
@@ -67,6 +65,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun googleSignOut() {
         firebaseAuth.signOut()
+        Log.d("TAG", "googleSignOut: signed out")
     }
 
     override fun getPaginatedBestProducts() = Pager(

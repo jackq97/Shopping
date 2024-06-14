@@ -1,6 +1,5 @@
 package com.jask.shopping.navigation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -19,6 +18,7 @@ import com.jask.shopping.screens.home_screen.composables.bottom_bar.BottomNaviga
 import com.jask.shopping.screens.product_view_screen.ProductViewScreen
 import com.jask.shopping.screens.product_view_screen.ProductViewViewModel
 import com.jask.shopping.screens.profile_screen.ProfileScreen
+import com.jask.shopping.screens.profile_screen.ProfileScreenViewModel
 import com.jask.shopping.screens.search_screen.SearchScreen
 
 
@@ -27,6 +27,12 @@ fun MyBottomNavigation(
     modifier: Modifier,
     navController: NavHostController
 ) {
+
+    val productViewViewModel: ProductViewViewModel = hiltViewModel()
+    val productState = productViewViewModel.state.value
+    val profileScreenViewmodel: ProfileScreenViewModel = hiltViewModel()
+    val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()
+    val homeFeedState = homeFeedViewModel.state.value
 
     NavHost(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
@@ -45,12 +51,9 @@ fun MyBottomNavigation(
             })
         ){
 
-            val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()
-            val state = homeFeedViewModel.state.value
-
             BackPressHandler(onBackPressed = {})
             HomeFeedScreen(
-                state = state,
+                state = homeFeedState,
                 onEvent = homeFeedViewModel::onEvent
             ){category, index ->
                 navController.navigate("product_view_screen/${category}/${index}")
@@ -69,7 +72,9 @@ fun MyBottomNavigation(
 
         composable(route = BottomNavigationItem.ProfileScreen.route){
             BackPressHandler(onBackPressed = {})
-            ProfileScreen()
+            ProfileScreen(
+                onEvent = profileScreenViewmodel::onEvent
+            )
         }
 
         composable(route = Screens.ProductViewScreen.route){
@@ -77,16 +82,12 @@ fun MyBottomNavigation(
             val category = it.arguments!!.getString("category")
             val index = it.arguments!!.getString("index")
 
-            Log.d("TAG", "MyBottomNavigation: $category")
-            
-            val productViewViewModel: ProductViewViewModel = hiltViewModel()
-            val state = productViewViewModel.state.value
-
             ProductViewScreen(
                 category = category,
                 index = index,
-                state = state,
-                onEvent = productViewViewModel::onEvent)
+                state = productState,
+                onEvent = productViewViewModel::onEvent
+            )
         }
     }
 }
