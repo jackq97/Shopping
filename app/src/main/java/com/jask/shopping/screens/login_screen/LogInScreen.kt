@@ -49,12 +49,32 @@ fun LoginScreen(
     onSignInClick: () -> Unit,
     onEvent: (LoginEvents) -> Unit){
 
+    val context = LocalContext.current
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var resetEmail by rememberSaveable { mutableStateOf("") }
     var emailErrorText by rememberSaveable { mutableStateOf("") }
     var emailValidationError by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = state.isSignInSuccessful) {
+        if(state.isSignInSuccessful) {
+            Toast.makeText(
+                context,
+                "Sign in successful",
+                Toast.LENGTH_LONG
+            ).show()
+
+            navController.navigate(Screens.HomeScreen.route)
+            onEvent(
+                LoginEvents.ResetState
+            )
+        }
+    }
 
     if (state.emailRegisterValidation is RegisterValidation.Failed){
         emailValidationError = true
@@ -117,7 +137,6 @@ fun LoginScreen(
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
-        val context = LocalContext.current
         LaunchedEffect(key1 = state.signInError) {
             state.signInError?.let { error ->
                 Toast.makeText(
@@ -143,12 +162,16 @@ fun LoginScreen(
             }
 
             LoginTextFields(label = "Email",
-                text = "",
-                onValueChange = {})
+                text = email,
+                onValueChange = {
+                    email = it
+                })
             Spacer(modifier = Modifier.height(10.dp))
             LoginTextFields(label = "Password",
-                text = "",
-                onValueChange = {})
+                text = password,
+                onValueChange = {
+                    password = it
+                })
 
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start) {
@@ -167,7 +190,14 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             SignInButton(label = "Login",
-                onSignInClick = {})
+                onSignInClick = {
+                    onEvent(
+                        LoginEvents.SignInUser(
+                            email = email,
+                            password = password
+                        )
+                    )
+                })
 
             Spacer(modifier = Modifier.height(10.dp))
 

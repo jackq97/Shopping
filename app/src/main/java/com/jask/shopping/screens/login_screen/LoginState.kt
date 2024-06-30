@@ -9,5 +9,5 @@ data class LoginState(
     val isSignInSuccessful: Boolean = false,
     val signInError: String? = null,
     val emailRegisterValidation: RegisterValidation = RegisterValidation.RegisterSuccess,
-    val passwordRegisterValidation: RegisterValidation = RegisterValidation.RegisterSuccess,
+    val passwordRegisterValidation: RegisterValidation = RegisterValidation.RegisterSuccess
 )

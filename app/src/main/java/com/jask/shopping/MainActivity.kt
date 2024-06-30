@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShoppingTheme {
 
-                val navController = rememberNavController()
+                val mainNavController = rememberNavController()
                 var startDestination by remember { mutableStateOf(Screens.LoginRegisterScreen.route) }
 
                 if(googleAuthUiClient.getSignedInUser() != null) {
@@ -57,11 +57,11 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                    navController = navController,
+                    navController = mainNavController,
                     startDestination = startDestination
                 ) {
                     composable(route = Screens.LoginRegisterScreen.route) {
-                        LoginRegisterScreen(navController = navController) }
+                        LoginRegisterScreen(navController = mainNavController) }
 
                     composable(route = Screens.LoginScreen.route) {
 
@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
                                             intent = result.data ?: return@launch
                                         )
                                         loginViewModel.onSignInResult(signInResult)
+                                        loginViewModel.uploadUserDataWithGoogleSignIn(signInResult)
                                     }
                                 }
                             }
@@ -89,14 +90,13 @@ class MainActivity : ComponentActivity() {
                                     "Sign in successful",
                                     Toast.LENGTH_LONG
                                 ).show()
-
-                                navController.navigate(Screens.HomeScreen.route)
+                                mainNavController.navigate(Screens.HomeScreen.route)
                                 loginViewModel.resetState()
                             }
                         }
 
                         LoginScreen(
-                            navController = navController,
+                            navController = mainNavController,
                             state = state,
                             onSignInClick = {
                                 Log.d("TAG", "onCreate: sign in google")
@@ -118,27 +118,13 @@ class MainActivity : ComponentActivity() {
                         val state = registerViewModel.state.value
 
                         RegisterScreen(state = state,
-                            navController = navController,
+                            navController = mainNavController,
                             onEvent = registerViewModel::onEvent
                         )
                     }
 
                     composable(route = Screens.HomeScreen.route) {
-
-                        HomeScreen(
-                            onSignOut = {
-                                lifecycleScope.launch {
-                                    googleAuthUiClient.signOut()
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Signed out",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-
-                                    navController.popBackStack()
-                                }
-                            }
-                        )
+                        HomeScreen(mainNavController = mainNavController)
                     }
                 }
             }

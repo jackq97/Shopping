@@ -35,6 +35,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import com.jask.shopping.data.model.CartProduct
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -50,7 +51,6 @@ fun ProductViewScreen(
     )
 
     val pagerState = rememberPagerState()
-
 
     Surface(
         modifier = Modifier
@@ -70,7 +70,7 @@ fun ProductViewScreen(
             val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
             val listOfSizes = listOf("XL", "S", "M", "L")
 
-            val pages: List<String> = product.images!!
+            val pages: List<String> = product.images
 
             Card(
                 modifier = Modifier
@@ -157,7 +157,16 @@ fun ProductViewScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(4.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = {
+                    onEvent(
+                    ProductViewEvents.AddUpdateProduct(
+                        CartProduct(
+                            product = product,
+                            quantity = 1
+                        )
+                    ))
+                })
+            {
                 Text(
                     text = "Add To Card",
                     style = MaterialTheme.typography.labelMedium

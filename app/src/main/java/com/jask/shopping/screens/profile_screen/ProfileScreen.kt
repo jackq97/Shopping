@@ -6,16 +6,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.jask.shopping.navigation.Screens
 
 @Composable
 fun ProfileScreen(
-    onEvent: (ProfileEvents) -> Unit
+    onEvent: (ProfileEvents) -> Unit,
+    mainNavController: NavController
 ){
 
     Surface {
         Column {
             Button(onClick = {
                 onEvent(ProfileEvents.SignOut)
+                mainNavController.navigate(Screens.LoginRegisterScreen.route)
             }) {
                 Text(text = "Sign out")
             }
@@ -28,6 +33,7 @@ fun ProfileScreen(
 fun ProfileScreenPreview(){
 
     ProfileScreen(
-        onEvent = {}
+        onEvent = {},
+        mainNavController = rememberNavController()
     )
 }

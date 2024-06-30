@@ -7,8 +7,11 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
+import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.data.paging.ProductsPagingSource
+import com.jask.shopping.screens.login_screen.SignInResult
 import com.jask.shopping.util.Constants.PAGE_SIZE
 import com.jask.shopping.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +26,18 @@ class AuthRepositoryImpl @Inject constructor(
     private val config: PagingConfig
 ) : AuthRepository {
 
+    /* override suspend fun signOut(): Flow<Response<Boolean>> = flow {
+        try {
+            emit(Loading)
+            auth.currentUser?.apply {
+                delete().await()
+                emit(Success(true))
+            }
+        } catch (e: Exception) {
+            emit(Error(e.message ?: ERROR_MESSAGE))
+        }
+    }*/
+
     override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {return flow {
             emit(Resource.Loading())
             val result = firebaseAuth.signInWithEmailAndPassword(
@@ -33,21 +48,132 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun registerUser(email: String, password: String): Flow<Resource<AuthResult>> {
+    override fun registerUser(email: String,
+                              password: String,
+                              firstName: String,
+                              lastName: String
+    ): Flow<Resource<AuthResult>> {
         return flow {
             emit(Resource.Loading())
             val result = firebaseAuth.createUserWithEmailAndPassword(
                 email, password).await()
             emit(Resource.Success(result))
+            val uid = result.user!!.uid
+            val userMap = hashMapOf(
+                "uid" to uid,
+                "firstName" to firstName,
+                "lastName" to lastName
+            )
+
+            firestore.collection("users").document(uid).set(userMap)
+                .addOnSuccessListener {
+                    Log.d("TAG", "User information added to Firestore successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("TAG", "Error adding user information to Firestore", e)
+            }
+
         }.catch {
             emit(Resource.Error(it.message.toString())) }
     }
 
+    override fun uploadUserDataWithGoogleSignIn(signInResult: SignInResult): Flow<Resource<Unit>> = flow {
+        Log.d("viewModel", "upload data function")
+        emit(Resource.Loading())
+
+        try {
+            val result = signInResult.data
+            val uid = result?.userId ?: throw Exception("User not authenticated")
+            val name = result.username
+
+            val nameParts = name?.split(" ")
+            val firstName = nameParts?.firstOrNull() ?: ""
+            val lastName = nameParts?.lastOrNull() ?: ""
+
+            val userMap = hashMapOf(
+                "uid" to uid,
+                "firstName" to firstName,
+                "lastName" to lastName
+            )
+
+            // Use await() to handle the Firestore operation
+            firestore.collection("users").document(uid).set(userMap).await()
+
+            Log.d("TAG", "User information added to Firestore successfully")
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            Log.w("TAG", "Error adding user information to Firestore", e)
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun addProductToCart(cartProduct: CartProduct): Flow<Resource<Unit>> = flow {
+
+        emit(Resource.Loading())
+
+        try {
+
+            val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+
+            val cartCollection = firestore.collection("users").document(uid).collection("cart")
+
+            fun increaseQuantity(documentId: String, onResult: (String?, Exception?) -> Unit){
+                firestore.runTransaction { transaction ->
+                    val documentRef = cartCollection.document(documentId)
+                    val document = transaction.get(documentRef)
+                    val productObject = document.toObject(CartProduct::class.java)
+                    productObject?.let {
+                        val newQuantity = cartProduct.quantity + 1
+                        val newProductObject = it.copy(quantity = newQuantity)
+                        transaction.set(documentRef, newProductObject)
+                    }
+                }.addOnSuccessListener {
+                    onResult(documentId, null)
+                }.addOnFailureListener{
+                    onResult(null, it)
+                }
+            }
+
+            firestore.collection("users").document(uid).collection("cart")
+                .whereEqualTo("product.id", cartProduct.product.id).get()
+                .addOnSuccessListener {
+                    if (it.isEmpty){
+                        //add new product
+
+                        cartCollection.document().set(cartProduct)
+                            .addOnSuccessListener {
+                                Log.d("TAG", "addProductToCart: product added")
+                            }.addOnFailureListener {
+                                Log.d("TAG", "addProductToCart: error")
+                            }
+
+                    } else {
+
+                        val product = it.first().toObject(CartProduct::class.java)
+
+                        if (product == cartProduct){ //increase the quantity
+
+
+                        } else { //add new product
+
+                    }
+                }
+            }
+
+            emit(Resource.Success(Unit))
+        } catch (e: Exception){
+
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
     override fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>> {
+
         return flow {
             emit(Resource.Loading())
             val result = firebaseAuth.signInWithCredential(credential).await()
             emit(Resource.Success(result))
+
         }.catch {
             emit(Resource.Error(it.message.toString()))
         }

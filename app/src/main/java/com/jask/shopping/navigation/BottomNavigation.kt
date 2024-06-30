@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,7 +26,8 @@ import com.jask.shopping.screens.search_screen.SearchScreen
 @Composable
 fun MyBottomNavigation(
     modifier: Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    mainNavController: NavController
 ) {
 
     val productViewViewModel: ProductViewViewModel = hiltViewModel()
@@ -73,7 +75,8 @@ fun MyBottomNavigation(
         composable(route = BottomNavigationItem.ProfileScreen.route){
             BackPressHandler(onBackPressed = {})
             ProfileScreen(
-                onEvent = profileScreenViewmodel::onEvent
+                onEvent = profileScreenViewmodel::onEvent,
+                mainNavController = mainNavController
             )
         }
 

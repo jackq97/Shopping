@@ -106,7 +106,11 @@ fun RegisterScreen(
                         Log.d("register screen ", " Registered ")
                         onEvent(RegisterEvents.CreateAccountWithEmailAndPassword(
                             email = email.trim(),
-                            password = password))
+                            password = password,
+                            firstName = firstName,
+                            lastName = lastName
+                        )
+                        )
                     } else {
                         Log.d("register screen ", "RegisterScreen: fill all fields")
                     }

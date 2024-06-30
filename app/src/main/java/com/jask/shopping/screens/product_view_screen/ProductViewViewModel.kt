@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.repository.AuthRepository
 import com.jask.shopping.util.Resource
 import com.jask.shopping.util.validateEmail
@@ -18,10 +19,22 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
     private val _state = mutableStateOf(ProductViewStates())
     val state: State<ProductViewStates> = _state
 
-    fun onEvent(event: ProductViewEvents) {
-        when (event){
-            is ProductViewEvents.GetProductsByCategory -> {
-                getAllItems(event.category)
+    private fun addUpdateProduct(cartProduct: CartProduct) = viewModelScope.launch {
+
+        repository.addProductToCart(cartProduct = cartProduct).collect { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(isLoading = true)
+                }
+
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(isLoading = false)
+                    Log.d("TAG", "product added")
+                }
+
+                is Resource.Error -> {
+                    Log.d("TAG", "getAllItems: error")
+                }
             }
         }
     }
@@ -42,6 +55,17 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
                 is Resource.Error -> {
                     Log.d("TAG", "getAllItems: error")
                 }
+            }
+        }
+    }
+
+    fun onEvent(event: ProductViewEvents) {
+        when (event){
+            is ProductViewEvents.GetProductsByCategory -> {
+                getAllItems(event.category)
+            }
+            is ProductViewEvents.AddUpdateProduct -> {
+                addUpdateProduct(event.cartProduct)
             }
         }
     }
