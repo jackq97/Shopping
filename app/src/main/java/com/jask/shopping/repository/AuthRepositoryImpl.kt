@@ -117,52 +117,55 @@ class AuthRepositoryImpl @Inject constructor(
 
             val cartCollection = firestore.collection("users").document(uid).collection("cart")
 
-            fun increaseQuantity(documentId: String, onResult: (String?, Exception?) -> Unit){
+            fun increaseQuantity(documentId: String){
                 firestore.runTransaction { transaction ->
                     val documentRef = cartCollection.document(documentId)
                     val document = transaction.get(documentRef)
                     val productObject = document.toObject(CartProduct::class.java)
                     productObject?.let {
-                        val newQuantity = cartProduct.quantity + 1
+                        val newQuantity = it.quantity + 1
                         val newProductObject = it.copy(quantity = newQuantity)
                         transaction.set(documentRef, newProductObject)
                     }
                 }.addOnSuccessListener {
-                    onResult(documentId, null)
-                }.addOnFailureListener{
-                    onResult(null, it)
+                    Log.d("TAG", "addProductToCart: quantity increased")
+                }.addOnFailureListener{e ->
+                    Log.d("TAG", "addProductToCart: $e quantity increase Failed error")
                 }
             }
 
             firestore.collection("users").document(uid).collection("cart")
                 .whereEqualTo("product.id", cartProduct.product.id).get()
                 .addOnSuccessListener {
+
                     if (it.isEmpty){
                         //add new product
-
                         cartCollection.document().set(cartProduct)
                             .addOnSuccessListener {
                                 Log.d("TAG", "addProductToCart: product added")
                             }.addOnFailureListener {
                                 Log.d("TAG", "addProductToCart: error")
-                            }
-
+                        }
                     } else {
 
                         val product = it.first().toObject(CartProduct::class.java)
-
-                        if (product == cartProduct){ //increase the quantity
-
-
+                        if (product.product.id == cartProduct.product.id){ //increase the quantity
+                            val documentId = it.first().id
+                            increaseQuantity(documentId)
                         } else { //add new product
-
+                            cartCollection.document().set(cartProduct).addOnSuccessListener {
+                                    Log.d("TAG", "addProductToCart: product added")
+                                }.addOnFailureListener {
+                                    Log.d("TAG", "addProductToCart: error"
+                                )
+                            }
+                        }
                     }
                 }
-            }
 
             emit(Resource.Success(Unit))
-        } catch (e: Exception){
 
+        } catch (e: Exception){
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
     }

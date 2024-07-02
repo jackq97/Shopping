@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.repository.AuthRepository
 import com.jask.shopping.util.Resource
-import com.jask.shopping.util.validateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,11 +28,10 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
 
                 is Resource.Success -> {
                     _state.value = _state.value.copy(isLoading = false)
-                    Log.d("TAG", "product added")
                 }
 
                 is Resource.Error -> {
-                    Log.d("TAG", "getAllItems: error")
+                    Log.d("TAG", " viewModel addUpdateProduct: error")
                 }
             }
         }

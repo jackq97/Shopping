@@ -82,8 +82,8 @@ fun MyBottomNavigation(
 
         composable(route = Screens.ProductViewScreen.route){
 
-            val category = it.arguments!!.getString("category")
-            val index = it.arguments!!.getString("index")
+            val category = it.arguments?.getString("category") ?: ""
+            val index = it.arguments?.getString("index") ?: "0"
 
             ProductViewScreen(
                 category = category,
