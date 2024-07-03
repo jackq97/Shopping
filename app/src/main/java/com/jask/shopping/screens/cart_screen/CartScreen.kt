@@ -1,6 +1,5 @@
 package com.jask.shopping.screens.cart_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,59 +31,75 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.jask.shopping.data.model.CartProduct
 
 @Composable
-fun CartScreen(){
+fun CartScreen(
+    state: CartStates,
+    onEvent: (CartEvents) -> Unit
+){
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
-        Column(
-            modifier = Modifier
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            LazyColumn(modifier = Modifier.height(600.dp)) {
-                items(10){
-                    CartItemsColumn()
-                }
-            }
-
-            Spacer(modifier = Modifier
-                .weight(1f)
-            )
-
-            Row(modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 30.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+        if (!state.isLoading) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                TotalTitleText(label = "Total")
+                LazyColumn(modifier = Modifier.height(600.dp)) {
+                    items(state.cartProduct) { data ->
+                        CartItemsColumn(data,
+                            onEvent = onEvent)
+                    }
+                }
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                TotalTitleText(label = "$150")
-            }
-
-
-            Button(
-                modifier = Modifier
-                    .width(400.dp)
-                    .height(50.dp),
-                shape = RoundedCornerShape(10),
-                onClick = { /*TODO*/ }) {
-
-                Text(text = "Check out",
-                    fontSize = 20.sp
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
                 )
+
+                Row(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    TotalTitleText(label = "Total")
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    TotalTitleText(label = "$ ${state.cartProduct.sumOf { it.product.price.toInt() * it.quantity }}")
+                }
+
+                Button(
+                    modifier = Modifier
+                        .width(400.dp)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10),
+                    onClick = { /*TODO*/ }) {
+
+                    Text(
+                        text = "Check out",
+                        fontSize = 20.sp
+                    )
+                }
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
     }
@@ -99,37 +116,49 @@ fun TotalTitleText(label: String){
 }
 
 @Composable
-fun CartItemsColumn(){
+fun CartItemsColumn(cartProduct: CartProduct,
+                    onEvent: (CartEvents) -> Unit
+                    ){
 
-    Row(modifier = Modifier
-        .height(100.dp)
+    Card(modifier = Modifier
         .fillMaxWidth()
+        .height(150.dp)
+        .padding(bottom = 8.dp)
     ) {
 
-        Image(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize(),
-            imageVector = Icons.Default.Add,
-            contentDescription = "")
+        Row {
 
-        Row(modifier = Modifier.weight(3f)
-            .background(color = Color(0xFFF4F6F8))
+        AsyncImage(
+            modifier = Modifier.weight(1f),
+            model = cartProduct.product.images.first(),
+            contentScale = ContentScale.Crop,
+            contentDescription = null
+        )
+
+        Row(modifier = Modifier
+            .fillMaxSize()
+            .weight(3f)
+            .padding(start = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Column(modifier = Modifier
-                .weight(1f)
+            Column(
+                modifier = Modifier
+                    .weight(1f)
             ) {
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                Text(text = "Product Name",
+                Text(
+                    text = cartProduct.product.name,
                     fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "$25",
+                Text(
+                    text = cartProduct.product.price.toString(),
                     fontSize = 12.sp,
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray
@@ -142,19 +171,21 @@ fun CartItemsColumn(){
                         .fillMaxWidth()
                 ) {
 
-                    Box(modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(color = Color.Red)
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(color = Color.Red)
                     )
 
                     Spacer(modifier = Modifier.width(4.dp))
 
-                    Box(modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(color = Color.Gray)
-                    ){
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(color = Color.Gray)
+                    ) {
                         Text(
                             modifier = Modifier
                                 .align(Alignment.Center),
@@ -166,7 +197,7 @@ fun CartItemsColumn(){
 
             Column(
                 modifier = Modifier
-                .weight(1f),
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -174,20 +205,43 @@ fun CartItemsColumn(){
                 Row {
                     Spacer(modifier = Modifier.weight(1f))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CartIcon()
-                        Text(text = "1")
-                        CartIcon()
+                        // increase
+                        CartIcon(
+                            onclick = {
+                                onEvent(
+                                    CartEvents.IncreaseQuantity(
+                                        documentId = cartProduct.product.id
+                                    )
+                                )
+                            }
+                        )
+
+                        Text(text = cartProduct.quantity.toString())
+
+                        // decrease
+                        CartIcon(
+                            onclick = {
+                                onEvent(
+                                    CartEvents.DecreaseQuantity(
+                                        documentId = cartProduct.product.id
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }
+        }
         }
     }
 }
 
 @Composable
-fun CartIcon(){
+fun CartIcon(
+    onclick: () -> Unit
+){
 
-    IconButton(onClick = { /*TODO*/ }) {
+    IconButton(onClick = onclick) {
 
         Box(
             modifier = Modifier
@@ -208,6 +262,9 @@ fun CartIcon(){
 @Composable
 @Preview
 fun CartScreenPreview(){
-    CartScreen()
+    CartScreen(
+        state = CartStates(),
+        onEvent = {}
+    )
     //CartItemsColumn()
 }

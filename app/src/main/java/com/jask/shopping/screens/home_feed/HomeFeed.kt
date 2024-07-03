@@ -1,7 +1,6 @@
 package com.jask.shopping.screens.home_feed
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.log
 import com.jask.shopping.R
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.screens.home_feed.composables.BestDealsView
@@ -54,7 +49,7 @@ import com.jask.shopping.screens.home_feed.composables.TopProductView
 fun HomeFeedScreen(
     state: HomeFeedStates,
     onEvent: (HomeFeedEvents) -> Unit,
-    onClick: (String, String)-> Unit,
+    onClick: (String)-> Unit,
 ){
 
     var selectedTabState by remember { mutableIntStateOf(0) }
@@ -148,7 +143,7 @@ fun HomeFeedScreen(
                         imageUrl = pagingBestProducts[index]!!.images[0],
                         title = pagingBestProducts[index]!!.name,
                         price = pagingBestProducts[index]!!.price.toString(),
-                        index = index,
+                        id = pagingBestProducts[index]!!.id,
                         onClick = onClick
                     )
                 }
@@ -178,7 +173,7 @@ fun HomeFeedScreen(
 @Composable
 fun HomeFeedSpecialProductLazyRow(
     specialProducts: LazyPagingItems<Product>,
-    onClick:(String, String) -> Unit
+    onClick:(String) -> Unit
 ){
     LazyRow(modifier = Modifier,
     ) {
@@ -189,7 +184,7 @@ fun HomeFeedSpecialProductLazyRow(
                 imageUrl = specialProducts[index]!!.images[0],
                 title = specialProducts[index]!!.name,
                 price = specialProducts[index]!!.price.toString(),
-                index = index,
+                id = specialProducts[index]!!.id,
                 onClick = onClick
             )
         }
@@ -199,7 +194,7 @@ fun HomeFeedSpecialProductLazyRow(
 @Composable
 fun HomeFeedBestDealsProductLazyRow(
     bestDeals: LazyPagingItems<Product>,
-    onClick:(String, String) -> Unit
+    onClick:(String) -> Unit
 ) {
     LazyRow(modifier = Modifier) {
 
@@ -208,7 +203,7 @@ fun HomeFeedBestDealsProductLazyRow(
                 imageUrl = bestDeals[index]!!.images[0],
                 title = bestDeals[index]!!.name,
                 price = bestDeals[index]!!.price.toString(),
-                index = index,
+                id = bestDeals[index]!!.id,
                 onClick = onClick
             )
         }
@@ -236,6 +231,6 @@ fun HomeFeedScreenPreview(){
     HomeFeedScreen(
         state = HomeFeedStates(),
         onEvent = {},
-        onClick = { _, _ -> }
+        onClick = {}
     )
 }

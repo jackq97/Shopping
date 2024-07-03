@@ -36,7 +36,6 @@ import com.jask.shopping.R
 @Composable
 fun SpecialItemView(){
 
-
     Surface(modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.background)
@@ -46,21 +45,21 @@ fun SpecialItemView(){
             TopProductView(imageUrl = "Bristol",
                 title = "Bernabe",
                 price = "Tamira",
-                index = 6,
-                onClick = { _, _ -> },
+                id = "",
+                onClick = {},
                 )
 
             ProductView(imageUrl = "Megan",
                 title = "Ligia",
                 price = "Leopoldo",
-                index = 6,
-                onClick = { _, _ -> })
+                id = "",
+                onClick = {})
 
             BestDealsView(imageUrl = "",
                 title = "",
                 price = "",
-                index = 6,
-                onClick = { _, _ -> })
+                id = "",
+                onClick = {})
         }
     }
 }
@@ -70,15 +69,15 @@ fun TopProductView(
     imageUrl: String,
     title: String,
     price: String,
-    index: Int,
-    onClick: (String, String)-> Unit,
+    id: String,
+    onClick: (String)-> Unit,
 ){
     Card(modifier = Modifier
         .width(270.dp)
         .height(180.dp)
         .padding(horizontal = 8.dp)
         .clickable {
-            onClick("special item",index.toString())
+            onClick(id)
         }) {
 
         Row {
@@ -141,8 +140,8 @@ fun ProductView(
     imageUrl: String,
     title: String,
     price: String,
-    index: Int,
-    onClick:(String, String) -> Unit
+    id: String,
+    onClick:(String) -> Unit
 ){
 
     Row(modifier = Modifier
@@ -150,7 +149,7 @@ fun ProductView(
         .height(100.dp)
         .padding(horizontal = 8.dp)
         .clickable {
-            onClick("best deals",index.toString())
+            onClick(id)
         }
     ) {
 
@@ -206,13 +205,14 @@ fun ProductView(
         }
     }
 }
+
 @Composable
 fun BestDealsView(
     imageUrl: String,
     title: String,
     price: String,
-    index: Int,
-    onClick:(String, String) -> Unit
+    id: String,
+    onClick:(String) -> Unit
 ){
     Card(modifier = Modifier
         .width(150.dp)
@@ -222,7 +222,7 @@ fun BestDealsView(
             vertical = 4.dp
         )
         .clickable {
-            onClick("best products",index.toString())
+            onClick(id)
         }
     ) {
 

@@ -18,7 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,14 +40,13 @@ import com.jask.shopping.data.model.CartProduct
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductViewScreen(
-    category: String?,
-    index: String?,
     state: ProductViewStates,
     onEvent: (ProductViewEvents) -> Unit,
+    id: String
     ) {
 
     onEvent(
-        ProductViewEvents.GetProductsByCategory(category = category!!)
+        ProductViewEvents.GetProductsByCategory(id = id)
     )
 
     val pagerState = rememberPagerState()
@@ -64,9 +63,7 @@ fun ProductViewScreen(
                 .padding(12.dp)
         ) {
 
-            if (state.allProducts.isNotEmpty()) {
-            
-            val product = state.allProducts[index!!.toInt()]
+            val product = state.product
             val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
             val listOfSizes = listOf("XL", "S", "M", "L")
 
@@ -134,7 +131,7 @@ fun ProductViewScreen(
                 )
             }
 
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(top = 5.dp),
                 color = Color.Gray)
 
@@ -171,7 +168,6 @@ fun ProductViewScreen(
                     text = "Add To Card",
                     style = MaterialTheme.typography.labelMedium
                 )
-            }
             }
         }
     }
@@ -246,9 +242,8 @@ fun SizeColumnInfo(
 @Preview
 fun ProductViewPreview(){
     ProductViewScreen(
-        index = "",
         state = ProductViewStates(),
         onEvent = {},
-        category = ""
+        id = ""
     )
 }

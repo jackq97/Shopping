@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.jask.shopping.screens.cart_screen.CartScreen
+import com.jask.shopping.screens.cart_screen.CartViewModel
 import com.jask.shopping.screens.home_feed.HomeFeedScreen
 import com.jask.shopping.screens.home_feed.HomeFeedViewModel
 import com.jask.shopping.screens.home_screen.composables.bottom_bar.BackPressHandler
@@ -44,21 +45,16 @@ fun MyBottomNavigation(
 
         //bottom bar
         composable(route = BottomNavigationItem.HomeFeedScreen.route,
-            arguments = listOf(
-                navArgument("category"){
-                    type = NavType.StringType
-                },
-                navArgument("index"){
-                    type = NavType.StringType
+            arguments = listOf(navArgument("id"){
+                type = NavType.StringType
             })
         ){
-
             BackPressHandler(onBackPressed = {})
             HomeFeedScreen(
                 state = homeFeedState,
                 onEvent = homeFeedViewModel::onEvent
-            ){category, index ->
-                navController.navigate("product_view_screen/${category}/${index}")
+            ){id ->
+                navController.navigate("product_view_screen/${id}")
             }
         }
 
@@ -69,7 +65,11 @@ fun MyBottomNavigation(
 
         composable(route = BottomNavigationItem.CartScreen.route){
             BackPressHandler(onBackPressed = {})
-            CartScreen()
+            val viewModel: CartViewModel = hiltViewModel()
+            val state = viewModel.state.value
+            CartScreen(state = state,
+                onEvent = viewModel::onEvent
+                )
         }
 
         composable(route = BottomNavigationItem.ProfileScreen.route){
@@ -81,13 +81,9 @@ fun MyBottomNavigation(
         }
 
         composable(route = Screens.ProductViewScreen.route){
-
-            val category = it.arguments?.getString("category") ?: ""
-            val index = it.arguments?.getString("index") ?: "0"
-
+            val id = it.arguments?.getString("id") ?: ""
             ProductViewScreen(
-                category = category,
-                index = index,
+                id = id,
                 state = productState,
                 onEvent = productViewViewModel::onEvent
             )

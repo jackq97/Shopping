@@ -64,7 +64,6 @@ class AuthRepositoryImpl @Inject constructor(
                 "firstName" to firstName,
                 "lastName" to lastName
             )
-
             firestore.collection("users").document(uid).set(userMap)
                 .addOnSuccessListener {
                     Log.d("TAG", "User information added to Firestore successfully")
@@ -72,7 +71,6 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnFailureListener { e ->
                     Log.w("TAG", "Error adding user information to Firestore", e)
             }
-
         }.catch {
             emit(Resource.Error(it.message.toString())) }
     }
@@ -80,12 +78,10 @@ class AuthRepositoryImpl @Inject constructor(
     override fun uploadUserDataWithGoogleSignIn(signInResult: SignInResult): Flow<Resource<Unit>> = flow {
         Log.d("viewModel", "upload data function")
         emit(Resource.Loading())
-
         try {
             val result = signInResult.data
             val uid = result?.userId ?: throw Exception("User not authenticated")
             val name = result.username
-
             val nameParts = name?.split(" ")
             val firstName = nameParts?.firstOrNull() ?: ""
             val lastName = nameParts?.lastOrNull() ?: ""
@@ -95,10 +91,8 @@ class AuthRepositoryImpl @Inject constructor(
                 "firstName" to firstName,
                 "lastName" to lastName
             )
-
             // Use await() to handle the Firestore operation
             firestore.collection("users").document(uid).set(userMap).await()
-
             Log.d("TAG", "User information added to Firestore successfully")
             emit(Resource.Success(Unit))
         } catch (e: Exception) {
@@ -107,16 +101,63 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun addProductToCart(cartProduct: CartProduct): Flow<Resource<Unit>> = flow {
-
+    override fun increaseProductQuantity(cartProductId: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
-
+        val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+        val cartCollection = firestore.collection("users").document(uid).collection("cart")
         try {
+            val cartProduct = firestore.collection("users").document(uid).collection("cart")
+                .whereEqualTo("product.id", cartProductId).get().await()
 
+            firestore.runTransaction { transaction ->
+                val documentRef = cartCollection.document(cartProduct.first().id)
+                val document = transaction.get(documentRef)
+                val productObject = document.toObject(CartProduct::class.java)
+                productObject?.let {
+                    val newQuantity = it.quantity + 1
+                    val newProductObject = it.copy(quantity = newQuantity)
+                    transaction.set(documentRef, newProductObject)
+                }
+            }.await() // Ensure to await the transaction
+            Log.d("TAG", "increaseProductQuantity: quantity increased")
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            Log.d("TAG", "increaseProductQuantity: $e quantity increase Failed error")
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun decreaseProductQuantity(cartProductId: String): Flow<Resource<Unit>> =  flow{
+        emit(Resource.Loading())
+        val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+        val cartCollection = firestore.collection("users").document(uid).collection("cart")
+        try {
+            val cartProduct = firestore.collection("users").document(uid).collection("cart")
+                .whereEqualTo("product.id", cartProductId).get().await()
+
+            firestore.runTransaction { transaction ->
+                val documentRef = cartCollection.document(cartProduct.first().id)
+                val document = transaction.get(documentRef)
+                val productObject = document.toObject(CartProduct::class.java)
+                productObject?.let {
+                    val newQuantity = it.quantity - 1
+                    val newProductObject = it.copy(quantity = newQuantity)
+                    transaction.set(documentRef, newProductObject)
+                }
+            }.await() // Ensure to await the transaction
+            Log.d("TAG", "increaseProductQuantity: quantity increased")
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            Log.d("TAG", "increaseProductQuantity: $e quantity increase Failed error")
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun addProductToCart(cartProduct: CartProduct): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading())
+        try {
             val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
-
             val cartCollection = firestore.collection("users").document(uid).collection("cart")
-
             fun increaseQuantity(documentId: String){
                 firestore.runTransaction { transaction ->
                     val documentRef = cartCollection.document(documentId)
@@ -133,11 +174,9 @@ class AuthRepositoryImpl @Inject constructor(
                     Log.d("TAG", "addProductToCart: $e quantity increase Failed error")
                 }
             }
-
             firestore.collection("users").document(uid).collection("cart")
                 .whereEqualTo("product.id", cartProduct.product.id).get()
                 .addOnSuccessListener {
-
                     if (it.isEmpty){
                         //add new product
                         cartCollection.document().set(cartProduct)
@@ -147,7 +186,6 @@ class AuthRepositoryImpl @Inject constructor(
                                 Log.d("TAG", "addProductToCart: error")
                         }
                     } else {
-
                         val product = it.first().toObject(CartProduct::class.java)
                         if (product.product.id == cartProduct.product.id){ //increase the quantity
                             val documentId = it.first().id
@@ -162,21 +200,17 @@ class AuthRepositoryImpl @Inject constructor(
                         }
                     }
                 }
-
             emit(Resource.Success(Unit))
-
         } catch (e: Exception){
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
     }
 
     override fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>> {
-
         return flow {
             emit(Resource.Loading())
             val result = firebaseAuth.signInWithCredential(credential).await()
             emit(Resource.Success(result))
-
         }.catch {
             emit(Resource.Error(it.message.toString()))
         }
@@ -218,16 +252,29 @@ class AuthRepositoryImpl @Inject constructor(
             .whereEqualTo("category", "special item").limit(PAGE_SIZE))
     }.flow
 
-    override fun getAllProducts(category: String): Flow<Resource<List<Product>>> = flow {
+    override fun getProductById(id: String): Flow<Resource<Product>> = flow {
         emit(Resource.Loading())
         try {
             val result = firestore.collection("Products")
-                .whereEqualTo("category", category)
+                .whereEqualTo("id", id)
                 .get()
                 .await()
-            val productList = result.toObjects(Product::class.java)
-            emit(Resource.Success(productList))
+            val product = result.first().toObject(Product::class.java)
+            emit(Resource.Success(product))
         } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun getCartProducts(): Flow<Resource<List<CartProduct>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val uid =  firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+            val result = firestore.collection("users").document(uid).collection("cart")
+                .get().await()
+            val cartProductList = result.toObjects(CartProduct::class.java)
+            emit(Resource.Success(cartProductList))
+        } catch (e: Exception){
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
     }

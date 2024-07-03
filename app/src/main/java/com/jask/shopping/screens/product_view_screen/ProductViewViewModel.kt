@@ -19,17 +19,14 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
     val state: State<ProductViewStates> = _state
 
     private fun addUpdateProduct(cartProduct: CartProduct) = viewModelScope.launch {
-
         repository.addProductToCart(cartProduct = cartProduct).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(isLoading = true)
                 }
-
                 is Resource.Success -> {
                     _state.value = _state.value.copy(isLoading = false)
                 }
-
                 is Resource.Error -> {
                     Log.d("TAG", " viewModel addUpdateProduct: error")
                 }
@@ -37,21 +34,18 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
         }
     }
 
-    private fun getAllItems(category: String) = viewModelScope.launch {
-
-        repository.getAllProducts(category = category).collect { result ->
+    private fun getProduct(id: String) = viewModelScope.launch {
+        repository.getProductById(id = id).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(isLoading = true)
                 }
-
                 is Resource.Success -> {
-                    _state.value = _state.value.copy(allProducts = result.data!!)
+                    _state.value = _state.value.copy(product = result.data!!)
                     _state.value = _state.value.copy(isLoading = false)
                 }
-
                 is Resource.Error -> {
-                    Log.d("TAG", "getAllItems: error")
+                    Log.d("TAG", "get Product: ${result.message}")
                 }
             }
         }
@@ -60,7 +54,7 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
     fun onEvent(event: ProductViewEvents) {
         when (event){
             is ProductViewEvents.GetProductsByCategory -> {
-                getAllItems(event.category)
+                getProduct(event.id)
             }
             is ProductViewEvents.AddUpdateProduct -> {
                 addUpdateProduct(event.cartProduct)
@@ -68,4 +62,3 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
         }
     }
 }
-
