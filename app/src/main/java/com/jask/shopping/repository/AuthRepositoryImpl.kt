@@ -8,6 +8,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.jask.shopping.data.model.Address
 import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.data.paging.ProductsPagingSource
@@ -76,7 +77,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun uploadUserDataWithGoogleSignIn(signInResult: SignInResult): Flow<Resource<Unit>> = flow {
-        Log.d("viewModel", "upload data function")
         emit(Resource.Loading())
         try {
             val result = signInResult.data
@@ -98,6 +98,31 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.w("TAG", "Error adding user information to Firestore", e)
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun addAddress(address: Address): Flow<Resource<Unit>> = flow{
+        emit(Resource.Loading())
+        val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+        try {
+        val userMap = hashMapOf(
+            "addressTitle" to address.addressTitle,
+            "fullName" to address.fullName,
+            "street" to address.street,
+            "phone" to address.phone,
+            "city" to address.city,
+            "state" to address.street
+        )
+        val result = firestore.collection("users").document(uid).collection(
+            "address"
+        ).document()
+            .set(userMap).addOnSuccessListener {
+                Log.d("TAG", "addAddress: address data added")
+            }.addOnFailureListener{
+                Log.d("TAG", "addAddress: error adding address data")
+            }
+        } catch (e: Exception) {
+            emit(Resource.Success(Unit))
         }
     }
 
@@ -231,27 +256,6 @@ class AuthRepositoryImpl @Inject constructor(
         Log.d("TAG", "googleSignOut: signed out")
     }
 
-    override fun getPaginatedBestProducts() = Pager(
-        config = config
-    ) {
-        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
-            .whereEqualTo("category", "best products").limit(PAGE_SIZE))
-    }.flow
-
-    override fun getPaginatedBestDealsProducts() = Pager(
-        config = config
-    ) {
-        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
-            .whereEqualTo("category", "best deals").limit(PAGE_SIZE))
-    }.flow
-
-    override fun getPaginatedSpecialItemProducts() = Pager(
-        config = config
-    ) {
-        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
-            .whereEqualTo("category", "special item").limit(PAGE_SIZE))
-    }.flow
-
     override fun getProductById(id: String): Flow<Resource<Product>> = flow {
         emit(Resource.Loading())
         try {
@@ -278,5 +282,27 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
     }
+
+    // paginated products
+    override fun getPaginatedBestProducts() = Pager(
+        config = config
+    ) {
+        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
+            .whereEqualTo("category", "best products").limit(PAGE_SIZE))
+    }.flow
+
+    override fun getPaginatedBestDealsProducts() = Pager(
+        config = config
+    ) {
+        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
+            .whereEqualTo("category", "best deals").limit(PAGE_SIZE))
+    }.flow
+
+    override fun getPaginatedSpecialItemProducts() = Pager(
+        config = config
+    ) {
+        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
+            .whereEqualTo("category", "special item").limit(PAGE_SIZE))
+    }.flow
 
 }

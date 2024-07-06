@@ -36,13 +36,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.jask.shopping.data.model.CartProduct
+import com.jask.shopping.navigation.Screens
 
 @Composable
 fun CartScreen(
     state: CartStates,
-    onEvent: (CartEvents) -> Unit
+    onEvent: (CartEvents) -> Unit,
+    navController: NavController
 ){
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -88,7 +92,9 @@ fun CartScreen(
                         .width(400.dp)
                         .height(50.dp),
                     shape = RoundedCornerShape(10),
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        navController.navigate(Screens.BillingScreen.route)
+                    }) {
 
                     Text(
                         text = "Check out",
@@ -264,7 +270,8 @@ fun CartIcon(
 fun CartScreenPreview(){
     CartScreen(
         state = CartStates(),
-        onEvent = {}
+        onEvent = {},
+        navController = rememberNavController()
     )
     //CartItemsColumn()
 }

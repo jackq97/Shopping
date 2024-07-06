@@ -3,6 +3,7 @@ package com.jask.shopping.repository
 import androidx.paging.PagingData
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
+import com.jask.shopping.data.model.Address
 import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.screens.login_screen.SignInResult
@@ -16,6 +17,7 @@ interface AuthRepository{
                      firstName: String,
                      lastName: String): Flow<Resource<AuthResult>>
     fun uploadUserDataWithGoogleSignIn(signInResult: SignInResult): Flow<Resource<Unit>>
+    fun addAddress(address: Address): Flow<Resource<Unit>>
     fun increaseProductQuantity(cartProductId: String): Flow<Resource<Unit>>
     fun decreaseProductQuantity(cartProductId: String): Flow<Resource<Unit>>
     fun getCartProducts(): Flow<Resource<List<CartProduct>>>

@@ -11,6 +11,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.jask.shopping.screens.address_screen.AddressScreen
+import com.jask.shopping.screens.billing_screen.BillingScreen
 import com.jask.shopping.screens.cart_screen.CartScreen
 import com.jask.shopping.screens.cart_screen.CartViewModel
 import com.jask.shopping.screens.home_feed.HomeFeedScreen
@@ -68,7 +70,8 @@ fun MyBottomNavigation(
             val viewModel: CartViewModel = hiltViewModel()
             val state = viewModel.state.value
             CartScreen(state = state,
-                onEvent = viewModel::onEvent
+                onEvent = viewModel::onEvent,
+                navController = navController
                 )
         }
 
@@ -87,6 +90,14 @@ fun MyBottomNavigation(
                 state = productState,
                 onEvent = productViewViewModel::onEvent
             )
+        }
+
+        composable(route = Screens.AddressScreen.route){
+            AddressScreen()
+        }
+
+        composable(route = Screens.BillingScreen.route){
+            BillingScreen()
         }
     }
 }
