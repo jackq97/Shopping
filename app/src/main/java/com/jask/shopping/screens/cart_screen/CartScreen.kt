@@ -269,7 +269,9 @@ fun CartIcon(
 @Preview
 fun CartScreenPreview(){
     CartScreen(
-        state = CartStates(),
+        state = CartStates(
+            isLoading = false, isSuccess = false, cartProduct = listOf(), isError = null
+        ),
         onEvent = {},
         navController = rememberNavController()
     )

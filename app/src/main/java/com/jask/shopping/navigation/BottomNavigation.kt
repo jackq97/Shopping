@@ -12,7 +12,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.jask.shopping.screens.address_screen.AddressScreen
+import com.jask.shopping.screens.address_screen.AddressViewModel
 import com.jask.shopping.screens.billing_screen.BillingScreen
+import com.jask.shopping.screens.billing_screen.BillingViewModel
 import com.jask.shopping.screens.cart_screen.CartScreen
 import com.jask.shopping.screens.cart_screen.CartViewModel
 import com.jask.shopping.screens.home_feed.HomeFeedScreen
@@ -93,11 +95,16 @@ fun MyBottomNavigation(
         }
 
         composable(route = Screens.AddressScreen.route){
-            AddressScreen()
+            val viewModel: AddressViewModel = hiltViewModel()
+            AddressScreen(onEvent = viewModel::onEvent)
         }
 
         composable(route = Screens.BillingScreen.route){
-            BillingScreen()
+            val viewModel: BillingViewModel = hiltViewModel()
+            val state = viewModel.state.value
+            BillingScreen(navController = navController,
+                states = state
+            )
         }
     }
 }

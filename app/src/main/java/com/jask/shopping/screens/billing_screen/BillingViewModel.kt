@@ -1,4 +1,4 @@
-package com.jask.shopping.screens.cart_screen
+package com.jask.shopping.screens.billing_screen
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -12,13 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
+class BillingViewModel @Inject constructor(private val repository: AuthRepository): ViewModel() {
 
-    private val _state = mutableStateOf(CartStates())
-    val state: State<CartStates> = _state
+    private val _state = mutableStateOf(BillingStates())
+    val state: State<BillingStates> = _state
 
     init {
         getCartProduct()
+        getAddress()
     }
 
     private fun getCartProduct() = viewModelScope.launch {
@@ -45,8 +46,32 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
 
-    private fun increaseProductQuantity(documentId: String) = viewModelScope.launch {
-        repository.increaseProductQuantity(documentId).collect { result ->
+    private fun getAddress() = viewModelScope.launch {
+        repository.getAddresses().collect { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        isSuccess = true,
+                        addressList = result.data!!
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isError = result.message
+                    )
+                }
+            }
+        }
+    }
+
+    private fun placeOrder(order: Order) = viewModelScope.launch {
+        repository.placeOrder(order).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
@@ -58,7 +83,6 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
                         isLoading = false,
                         isSuccess = true,
                     )
-                    getCartProduct()
                 }
                 is Resource.Error -> {
                     _state.value = _state.value.copy(
@@ -69,43 +93,4 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
 
-    private fun decreaseProductQuantity(documentId: String) = viewModelScope.launch {
-        repository.decreaseProductQuantity(documentId).collect { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _state.value = _state.value.copy(
-                        isLoading = true
-                    )
-                }
-                is Resource.Success -> {
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        isSuccess = true,
-                    )
-                    getCartProduct()
-                }
-                is Resource.Error -> {
-                    _state.value = _state.value.copy(
-                        isError = result.message
-                    )
-                }
-            }
-        }
-    }
-
-
-
-    fun onEvent(event: CartEvents) {
-        when (event) {
-            is CartEvents.IncreaseQuantity -> {
-                increaseProductQuantity(event.documentId)
-            }
-            is CartEvents.DecreaseQuantity -> {
-                decreaseProductQuantity(event.documentId)
-            }
-            is CartEvents.PlaceOrder -> {
-                //placeOrder(event.order)
-            }
-        }
-    }
 }

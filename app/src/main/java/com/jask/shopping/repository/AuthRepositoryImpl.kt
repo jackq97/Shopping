@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.jask.shopping.data.model.Address
 import com.jask.shopping.data.model.CartProduct
+import com.jask.shopping.data.model.Order
 import com.jask.shopping.data.model.Product
 import com.jask.shopping.data.paging.ProductsPagingSource
 import com.jask.shopping.screens.login_screen.SignInResult
@@ -270,6 +271,35 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun placeOrder(order: Order): Flow<Resource<Unit>> = flow{
+        emit(Resource.Loading())
+        val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+        try {
+            val userMap = hashMapOf(
+                "orderStatus" to order.orderStatus,
+                "totalPrice" to order.totalPrice,
+                "products" to order.products,
+                "address" to order.address,
+                "date" to order.date,
+                "orderId" to order.orderId
+            )
+            val result = firestore.collection("users").document(uid).collection(
+                "orders"
+            ).document()
+                .set(userMap).addOnSuccessListener {
+                    Log.d("TAG", "order: orders data added")
+                }.addOnFailureListener{
+                    Log.d("TAG", "order: error adding order data")
+                }
+        } catch (e: Exception) {
+            emit(Resource.Success(Unit))
+        }
+    }
+
+    override fun getAllOrders(): Flow<Resource<List<Order>>> {
+        TODO("Not yet implemented")
+    }
+
     override fun getCartProducts(): Flow<Resource<List<CartProduct>>> = flow {
         emit(Resource.Loading())
         try {
@@ -278,6 +308,19 @@ class AuthRepositoryImpl @Inject constructor(
                 .get().await()
             val cartProductList = result.toObjects(CartProduct::class.java)
             emit(Resource.Success(cartProductList))
+        } catch (e: Exception){
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+    override fun getAddresses(): Flow<Resource<List<Address>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val uid =  firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+            val result = firestore.collection("users").document(uid).collection("address")
+                .get().await()
+            val addressList = result.toObjects(Address::class.java)
+            emit(Resource.Success(addressList))
         } catch (e: Exception){
             emit(Resource.Error(e.message ?: "Unknown error occurred"))
         }
