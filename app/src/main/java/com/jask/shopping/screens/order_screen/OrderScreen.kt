@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -24,15 +25,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jask.shopping.data.model.Order
 
 @Composable
-fun OrderScreen(){
+fun OrderScreen(
+    states: OrderStates
+){
+
     Surface(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier
-            .padding(horizontal = 16.dp)) {
-            LazyColumn {
-                items(10) {
-                    OrderStatusColumn()
+
+        if (!states.isLoading) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+                LazyColumn {
+                    items(states.order) { data ->
+                        OrderStatusColumn(data = data)
+                    }
                 }
             }
         }
@@ -40,7 +50,7 @@ fun OrderScreen(){
 }
 
 @Composable
-fun OrderStatusColumn(){
+fun OrderStatusColumn(data: Order) {
 
     Column {
 
@@ -56,7 +66,7 @@ fun OrderStatusColumn(){
 
             Text(
                 modifier = Modifier.padding(start = 3.dp),
-                text = "98765434567")
+                text = data.orderId.toString())
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -72,7 +82,7 @@ fun OrderStatusColumn(){
 
         Text(
             modifier = Modifier.padding(bottom = 10.dp),
-            text = "2023-02-10",
+            text = data.date,
             color = Color.Gray
         )
 
@@ -85,6 +95,6 @@ fun OrderStatusColumn(){
     showBackground = true
 )
 fun OrderScreenPreview(){
-    OrderScreen()
+    OrderScreen(states = OrderStates())
     //OrderStatusColumn()
 }

@@ -21,6 +21,8 @@ import com.jask.shopping.screens.home_feed.HomeFeedScreen
 import com.jask.shopping.screens.home_feed.HomeFeedViewModel
 import com.jask.shopping.screens.home_screen.composables.bottom_bar.BackPressHandler
 import com.jask.shopping.screens.home_screen.composables.bottom_bar.BottomNavigationItem
+import com.jask.shopping.screens.order_screen.OrderScreen
+import com.jask.shopping.screens.order_screen.OrderViewModel
 import com.jask.shopping.screens.product_view_screen.ProductViewScreen
 import com.jask.shopping.screens.product_view_screen.ProductViewViewModel
 import com.jask.shopping.screens.profile_screen.ProfileScreen
@@ -103,8 +105,15 @@ fun MyBottomNavigation(
             val viewModel: BillingViewModel = hiltViewModel()
             val state = viewModel.state.value
             BillingScreen(navController = navController,
-                states = state
+                states = state,
+                onEvent = viewModel::onEvent
             )
+        }
+
+        composable(route = Screens.OrderScreen.route){
+            val viewModel: OrderViewModel = hiltViewModel()
+            val state = viewModel.state.value
+            OrderScreen(states = state)
         }
     }
 }

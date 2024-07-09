@@ -93,4 +93,13 @@ class BillingViewModel @Inject constructor(private val repository: AuthRepositor
         }
     }
 
+    fun onEvent(events: BillingEvents){
+
+        when (events){
+            is BillingEvents.PlaceOrder -> {
+                placeOrder(events.order)
+            }
+        }
+    }
+
 }

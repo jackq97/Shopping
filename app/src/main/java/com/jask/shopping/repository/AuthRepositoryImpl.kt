@@ -296,8 +296,17 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAllOrders(): Flow<Resource<List<Order>>> {
-        TODO("Not yet implemented")
+    override fun getAllOrders(): Flow<Resource<List<Order>>> = flow{
+        emit(Resource.Loading())
+        try {
+            val uid =  firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+            val result = firestore.collection("users").document(uid).collection("orders")
+                .get().await()
+            val orderList = result.toObjects(Order::class.java)
+            emit(Resource.Success(orderList))
+        } catch (e: Exception){
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
     }
 
     override fun getCartProducts(): Flow<Resource<List<CartProduct>>> = flow {

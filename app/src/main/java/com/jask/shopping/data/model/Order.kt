@@ -12,4 +12,6 @@ data class Order(
     val address: Address,
     val date: String = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(Date()),
     val orderId: Long = nextLong(0,100_000_000_000) + totalPrice.toLong()
-)
+) {
+    constructor(): this("", 0.0f, listOf(), Address(), "", 0)
+}
