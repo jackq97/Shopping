@@ -10,7 +10,7 @@ sealed class OrderStatus(val status: String) {
     data object Returned: OrderStatus("Returned")
 }
 
-fun gerOrderStatus(status: String): OrderStatus {
+fun getOrderStatus(status: String): OrderStatus {
 
     return when (status) {
 

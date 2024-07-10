@@ -8,5 +8,6 @@ sealed class Screens(val route: String) {
     data object ProductViewScreen: Screens(route = "product_view_screen/{id}")
     data object AddressScreen: Screens(route = "address_screen")
     data object BillingScreen: Screens(route = "billing_screen")
-    data object OrderScreen: Screens(route = "order_screen")
+    data object OrderScreen: Screens(route = "order_screen/{id}")
+    data object OrderDetailsScreen: Screens(route = "order_details_screen/{id}")
 }

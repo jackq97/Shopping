@@ -271,6 +271,26 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getOrderById(orderId: String): Flow<Resource<Order>> = flow{
+        emit(Resource.Loading())
+        try {
+            val uid =  firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+            Log.d("TAG", "getOrderById: repository $uid")
+            val result = firestore
+                .collection("users")
+                .document(uid)
+                .collection("orders")
+                .whereEqualTo("orderId", orderId.toLong())
+                .get()
+                .await()
+            Log.d("Firestore", "Number of documents retrieved: ${result.size()}")
+            val order = result.first().toObject(Order::class.java)
+            emit(Resource.Success(order))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
     override fun placeOrder(order: Order): Flow<Resource<Unit>> = flow{
         emit(Resource.Loading())
         val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
@@ -283,7 +303,7 @@ class AuthRepositoryImpl @Inject constructor(
                 "date" to order.date,
                 "orderId" to order.orderId
             )
-            val result = firestore.collection("users").document(uid).collection(
+           firestore.collection("users").document(uid).collection(
                 "orders"
             ).document()
                 .set(userMap).addOnSuccessListener {

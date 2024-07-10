@@ -1,6 +1,7 @@
 package com.jask.shopping.screens.order_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,11 +26,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.jask.shopping.data.model.Order
+import com.jask.shopping.data.model.OrderStatus
+import com.jask.shopping.data.model.getOrderStatus
 
 @Composable
 fun OrderScreen(
-    states: OrderStates
+    states: OrderStates,
+    navController: NavController
 ){
 
     Surface(modifier = Modifier.fillMaxWidth()) {
@@ -41,7 +47,8 @@ fun OrderScreen(
             ) {
                 LazyColumn {
                     items(states.order) { data ->
-                        OrderStatusColumn(data = data)
+                        OrderStatusColumn(data = data,
+                            navController = navController)
                     }
                 }
             }
@@ -50,9 +57,24 @@ fun OrderScreen(
 }
 
 @Composable
-fun OrderStatusColumn(data: Order) {
+fun OrderStatusColumn(data: Order,
+                      navController: NavController
+) {
 
-    Column {
+    val color = when (getOrderStatus(data.orderStatus)) {
+        is OrderStatus.Ordered -> Color(0xFFFF9800)
+        is OrderStatus.Canceled -> Color(0xFFF44336)
+        is OrderStatus.Confirmed -> Color(0xFF4CAF50)
+        is OrderStatus.Shipped -> Color(0xFF4CAF50)
+        is OrderStatus.Delivered -> Color(0xFF4CAF50)
+        is OrderStatus.Returned -> Color(0xFFF44336)
+    }
+
+    Column(modifier = Modifier
+        .clickable {
+            navController.navigate("order_details_screen/${data.orderId}")
+        }
+    ) {
 
         Row(
             modifier = Modifier.padding(top = 10.dp),
@@ -61,7 +83,7 @@ fun OrderStatusColumn(data: Order) {
                 modifier = Modifier
                     .size(10.dp)
                     .clip(shape = CircleShape)
-                    .background(color = Color.Red)
+                    .background(color = color)
             )
 
             Text(
@@ -95,6 +117,8 @@ fun OrderStatusColumn(data: Order) {
     showBackground = true
 )
 fun OrderScreenPreview(){
-    OrderScreen(states = OrderStates())
+    OrderScreen(states = OrderStates(),
+        navController = rememberNavController()
+        )
     //OrderStatusColumn()
 }

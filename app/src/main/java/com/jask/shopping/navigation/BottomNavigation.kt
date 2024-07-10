@@ -21,6 +21,8 @@ import com.jask.shopping.screens.home_feed.HomeFeedScreen
 import com.jask.shopping.screens.home_feed.HomeFeedViewModel
 import com.jask.shopping.screens.home_screen.composables.bottom_bar.BackPressHandler
 import com.jask.shopping.screens.home_screen.composables.bottom_bar.BottomNavigationItem
+import com.jask.shopping.screens.order_details_screen.OrderDetailsScreen
+import com.jask.shopping.screens.order_details_screen.OrderDetailsViewModel
 import com.jask.shopping.screens.order_screen.OrderScreen
 import com.jask.shopping.screens.order_screen.OrderViewModel
 import com.jask.shopping.screens.product_view_screen.ProductViewScreen
@@ -110,10 +112,26 @@ fun MyBottomNavigation(
             )
         }
 
-        composable(route = Screens.OrderScreen.route){
+        composable(route = Screens.OrderScreen.route,
+            arguments = listOf(navArgument("id"){
+                type = NavType.StringType
+            })
+        ){
             val viewModel: OrderViewModel = hiltViewModel()
             val state = viewModel.state.value
-            OrderScreen(states = state)
+            OrderScreen(states = state,
+                navController = navController
+            )
+        }
+
+        composable(route = Screens.OrderDetailsScreen.route){
+            val id = it.arguments?.getString("id") ?: ""
+            val viewModel: OrderDetailsViewModel = hiltViewModel()
+            val state = viewModel.state.value
+            OrderDetailsScreen(states = state,
+                id = id,
+                onEvent = viewModel::onEvent
+            )
         }
     }
 }

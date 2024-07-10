@@ -4,7 +4,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jask.shopping.data.model.Order
 import com.jask.shopping.repository.AuthRepository
 import com.jask.shopping.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

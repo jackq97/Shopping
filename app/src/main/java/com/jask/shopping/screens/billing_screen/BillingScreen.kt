@@ -32,11 +32,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +47,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -56,8 +55,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.jask.shopping.data.model.Address
 import com.jask.shopping.data.model.CartProduct
-import com.jask.shopping.data.model.Order
-import com.jask.shopping.data.model.OrderStatus
 import com.jask.shopping.navigation.Screens
 
 @Composable
@@ -123,7 +120,7 @@ fun BillingScreen(
 
                 LazyRow(modifier = Modifier.padding(vertical = 16.dp)) {
                     items(states.cartProduct) { data ->
-                        CartContentRow(data)
+                        CartContentRow(data = data)
                     }
                 }
 
@@ -247,13 +244,17 @@ fun LineRadioButtons(onClickOption: (String) -> Unit,
 }
 
 @Composable 
-fun CartContentRow(data: CartProduct) {
+fun CartContentRow(
+    width: Dp = 250.dp,
+    data: CartProduct) {
 
     Card(
         modifier = Modifier
             .height(100.dp)
-            .width(250.dp)
-            .padding(end = 8.dp),
+            .width(width)
+            .padding(end = 8.dp,
+                bottom = 8.dp
+            ),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFF5F6F8)

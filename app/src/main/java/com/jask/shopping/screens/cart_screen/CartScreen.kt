@@ -62,7 +62,8 @@ fun CartScreen(
                 LazyColumn(modifier = Modifier.height(600.dp)) {
                     items(state.cartProduct) { data ->
                         CartItemsColumn(data,
-                            onEvent = onEvent)
+                            onEvent = onEvent
+                        )
                     }
                 }
 
@@ -71,21 +72,7 @@ fun CartScreen(
                         .weight(1f)
                 )
 
-                Row(
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-
-                    TotalTitleText(label = "Total")
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    TotalTitleText(label = "$ ${state.cartProduct.sumOf { it.product.price.toInt() * it.quantity }}")
-                }
+                TotalCartInfoRow(cartProduct = state.cartProduct)
 
                 Button(
                     modifier = Modifier
@@ -108,6 +95,25 @@ fun CartScreen(
                 CircularProgressIndicator()
             }
         }
+    }
+}
+
+@Composable
+fun TotalCartInfoRow(cartProduct: List<CartProduct>){
+    Row(
+        modifier = Modifier
+            .height(100.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+
+        TotalTitleText(label = "Total")
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        TotalTitleText(label = "$ ${cartProduct.sumOf { it.product.price.toInt() * it.quantity }}")
     }
 }
 

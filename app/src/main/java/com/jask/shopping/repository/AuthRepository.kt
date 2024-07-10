@@ -30,6 +30,7 @@ interface AuthRepository{
     fun getProductById(id: String): Flow<Resource<Product>>
     fun placeOrder(order: Order) : Flow<Resource<Unit>>
     fun getAllOrders(): Flow<Resource<List<Order>>>
+    fun getOrderById(orderId: String): Flow<Resource<Order>>
     fun getPaginatedBestProducts(): Flow<PagingData<Product>>
     fun getPaginatedBestDealsProducts(): Flow<PagingData<Product>>
     fun getPaginatedSpecialItemProducts(): Flow<PagingData<Product>>
