@@ -20,11 +20,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,8 +49,7 @@ import com.jask.shopping.data.model.CartProduct
 fun ProductViewScreen(
     state: ProductViewStates,
     onEvent: (ProductViewEvents) -> Unit,
-    id: String
-    ) {
+    id: String) {
 
     onEvent(
         ProductViewEvents.GetProductsByCategory(id = id)
@@ -177,6 +183,9 @@ fun ProductViewScreen(
 fun ColorsInfoColumn(
     modifier: Modifier,
     listOfColors: List<Color>) {
+
+    var selectedTabState by remember { mutableIntStateOf(0) }
+
     Column(modifier = modifier) {
         Text(
             modifier = Modifier.padding(start = 5.dp),
@@ -184,6 +193,26 @@ fun ColorsInfoColumn(
             style = MaterialTheme.typography.headlineMedium
         )
         Spacer(modifier = Modifier.height(4.dp))
+
+        ScrollableTabRow(
+            selectedTabIndex = selectedTabState,
+            edgePadding = 0.dp,
+            divider = {}
+        ) {
+
+            listOfColors.forEachIndexed { index, color ->
+                Tab(selected = selectedTabState == index,
+                    onClick = { selectedTabState = index },
+                    content = {
+                        Box(modifier = Modifier.size(30.dp)
+                            .clip(shape = CircleShape)
+                            .background(color = color)
+                        )
+                    }
+                )
+            }
+        }
+
         LazyRow {
             items(listOfColors){ colors ->
 

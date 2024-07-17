@@ -1,5 +1,6 @@
 package com.jask.shopping.screens.home_feed.composables
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,14 +14,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.jask.shopping.R
+import com.jask.shopping.data.model.CartProduct
+import com.jask.shopping.data.model.Product
+import com.jask.shopping.screens.home_feed.HomeFeedEvents
+import com.jask.shopping.screens.home_feed.HomeFeedStates
 
 @Composable
 fun SpecialItemView(){
@@ -42,12 +54,11 @@ fun SpecialItemView(){
     ) {
 
         Column {
-            TopProductView(imageUrl = "Bristol",
-                title = "Bernabe",
-                price = "Tamira",
-                id = "",
-                onClick = {},
-                )
+            TopProductView(specialProduct = Product(),
+                onClick = { },
+                onEvent = { },
+                state = HomeFeedStates()
+            )
 
             ProductView(imageUrl = "Megan",
                 title = "Ligia",
@@ -66,18 +77,18 @@ fun SpecialItemView(){
 
 @Composable
 fun TopProductView(
-    imageUrl: String,
-    title: String,
-    price: String,
-    id: String,
+    specialProduct: Product,
     onClick: (String)-> Unit,
+    onEvent: (HomeFeedEvents) -> Unit,
+    state: HomeFeedStates
 ){
+
     Card(modifier = Modifier
         .width(270.dp)
         .height(180.dp)
         .padding(horizontal = 8.dp)
         .clickable {
-            onClick(id)
+            onClick(specialProduct.id)
         }) {
 
         Row {
@@ -86,7 +97,7 @@ fun TopProductView(
                 modifier = Modifier
                     .weight(1.5f)
                     .fillMaxSize(),
-                model = imageUrl,
+                model = specialProduct.images[0],
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
@@ -99,35 +110,55 @@ fun TopProductView(
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.End),
-                    onClick = { /*TODO*/ }) {
+                    onClick = {}) {
                     Icon(painterResource(id = R.drawable.favorite), contentDescription = "")
                 }
 
                 Text(
                     maxLines = 2,
-                    text = title,
+                    text = specialProduct.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
-                    text = price,
+                    text = specialProduct.price.toString(),
                     style = MaterialTheme.typography.labelLarge,
                 )
 
                 Box(modifier = Modifier.fillMaxSize()) {
+
                     Button(
                         modifier = Modifier
                             .padding(bottom = 2.dp, end = 5.dp)
                             .align(Alignment.BottomEnd)
                             .fillMaxWidth(),
                         contentPadding = PaddingValues(0.dp),
-                        onClick = { /*TODO*/ }) {
-                        Text(
-                            maxLines = 1,
-                            text = "Add to Cart"
-                        )
+                        onClick = {
+                            onEvent(
+                            HomeFeedEvents.AddUpdateProduct(
+                                cartProduct = CartProduct(
+                                    product = specialProduct,
+                                    quantity = 1
+                                )
+                            ))
+                        }){
+
+                        if (state.cartProducts.any { it.product.id == specialProduct.id }){
+
+                            Icon(
+                                modifier = Modifier.padding(end = 5.dp),
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null
+                            )
+                        } else {
+
+                            Text(
+                                maxLines = 1,
+                                text = "Add to Cart"
+                            )
+                        }
                     }
                 }
             }
@@ -147,11 +178,7 @@ fun ProductView(
     Row(modifier = Modifier
         .width(350.dp)
         .height(100.dp)
-        .padding(horizontal = 8.dp)
-        .clickable {
-            onClick(id)
-        }
-    ) {
+        .padding(horizontal = 8.dp)) {
 
         AsyncImage(
             modifier = Modifier
@@ -197,7 +224,7 @@ fun ProductView(
                 modifier = Modifier.align(Alignment.Center),
                 shape = RoundedCornerShape(5.dp),
                 contentPadding = PaddingValues(horizontal = 8.dp),
-                onClick = { /*TODO*/ }) {
+                onClick = { onClick(id) }) {
                 Text(text = "See product",
                     style = MaterialTheme.typography.labelLarge
                 )

@@ -85,7 +85,8 @@ fun MyBottomNavigation(
             BackPressHandler(onBackPressed = {})
             ProfileScreen(
                 onEvent = profileScreenViewmodel::onEvent,
-                mainNavController = mainNavController
+                mainNavController = mainNavController,
+                navController = navController
             )
         }
 

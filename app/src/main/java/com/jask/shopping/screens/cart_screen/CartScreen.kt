@@ -16,11 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,13 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.jask.shopping.R
 import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.navigation.Screens
 
@@ -51,7 +49,7 @@ fun CartScreen(
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
-        if (!state.isLoading) {
+        if (state.isSuccess) {
             Column(
                 modifier = Modifier
                     .padding(16.dp),
@@ -67,8 +65,7 @@ fun CartScreen(
                     }
                 }
 
-                Spacer(
-                    modifier = Modifier
+                Spacer(modifier = Modifier
                         .weight(1f)
                 )
 
@@ -88,11 +85,6 @@ fun CartScreen(
                         fontSize = 20.sp
                     )
                 }
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
             }
         }
     }
@@ -129,8 +121,7 @@ fun TotalTitleText(label: String){
 
 @Composable
 fun CartItemsColumn(cartProduct: CartProduct,
-                    onEvent: (CartEvents) -> Unit
-                    ){
+                    onEvent: (CartEvents) -> Unit){
 
     Card(modifier = Modifier
         .fillMaxWidth()
@@ -141,10 +132,10 @@ fun CartItemsColumn(cartProduct: CartProduct,
         Row {
 
         AsyncImage(
-            modifier = Modifier.weight(1f),
-            model = cartProduct.product.images.first(),
-            contentScale = ContentScale.Crop,
-            contentDescription = null
+        modifier = Modifier.weight(1f),
+        model = cartProduct.product.images.first(),
+        contentScale = ContentScale.Crop,
+        contentDescription = null
         )
 
         Row(modifier = Modifier
@@ -219,6 +210,7 @@ fun CartItemsColumn(cartProduct: CartProduct,
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         // increase
                         CartIcon(
+                            icon = R.drawable.add,
                             onclick = {
                                 onEvent(
                                     CartEvents.IncreaseQuantity(
@@ -232,6 +224,7 @@ fun CartItemsColumn(cartProduct: CartProduct,
 
                         // decrease
                         CartIcon(
+                            icon = R.drawable.remove,
                             onclick = {
                                 onEvent(
                                     CartEvents.DecreaseQuantity(
@@ -250,6 +243,7 @@ fun CartItemsColumn(cartProduct: CartProduct,
 
 @Composable
 fun CartIcon(
+    icon: Int,
     onclick: () -> Unit
 ){
 
@@ -263,7 +257,7 @@ fun CartIcon(
         ) {
             Icon(
                 modifier = Modifier,
-                imageVector = Icons.Default.Add,
+                painter = painterResource(id = icon),
                 contentDescription = "",
                 tint = Color.White
             )
@@ -274,12 +268,15 @@ fun CartIcon(
 @Composable
 @Preview
 fun CartScreenPreview(){
-    CartScreen(
+    /*CartScreen(
         state = CartStates(
             isLoading = false, isSuccess = false, cartProduct = listOf(), isError = null
         ),
         onEvent = {},
         navController = rememberNavController()
+    )*/
+    CartItemsColumn(
+        cartProduct = CartProduct(),
+        onEvent = {}
     )
-    //CartItemsColumn()
 }

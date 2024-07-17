@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -89,14 +90,16 @@ fun HomeFeedScreen(
                         contentDescription = null
                     )
                 }
-            ) {}
+            ){}
 
             ScrollableTabRow(
                 selectedTabIndex = selectedTabState,
-                edgePadding = 0.dp
+                edgePadding = 0.dp,
+                divider = {}
             ) {
+
                 titles.forEachIndexed { index, title ->
-                    Tab(
+                    Tab(modifier = Modifier.fillMaxWidth(),
                         selected = selectedTabState == index,
                         onClick = { selectedTabState = index },
                         text = {
@@ -105,6 +108,24 @@ fun HomeFeedScreen(
                             )
                         }
                     )
+                }
+            }
+
+            LaunchedEffect(key1 = selectedTabState) {
+
+                when (selectedTabState) {
+                    0 -> {
+                        Log.d("TAG", "HomeFeedScreen: 0")
+                    }
+                    1 -> {
+                        Log.d("TAG", "HomeFeedScreen: 1")
+                    }
+                    2 -> {
+                        Log.d("TAG", "HomeFeedScreen: 2")
+                    }
+                    3 -> {
+                        Log.d("TAG", "HomeFeedScreen: 3")
+                    }
                 }
             }
 
@@ -119,7 +140,9 @@ fun HomeFeedScreen(
                 item(span = {GridItemSpan(maxCurrentLineSpan)}) {
                     HomeFeedSpecialProductLazyRow(
                         specialProducts = pagingSpecialProducts,
-                        onClick = onClick
+                        onClick = onClick,
+                        onEvent = onEvent,
+                        state = state
                     )
                 }
 
@@ -151,7 +174,6 @@ fun HomeFeedScreen(
                 pagingBestProducts.apply {
                     when {
                         loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading -> {
-                            Log.d("TAG", "HomeFeedScreen: loading")
                             item(span = {GridItemSpan(maxCurrentLineSpan)}) {
                                 Box(
                                     modifier = Modifier.fillMaxWidth(),
@@ -173,7 +195,9 @@ fun HomeFeedScreen(
 @Composable
 fun HomeFeedSpecialProductLazyRow(
     specialProducts: LazyPagingItems<Product>,
-    onClick:(String) -> Unit
+    onClick:(String) -> Unit,
+    onEvent: (HomeFeedEvents) -> Unit,
+    state: HomeFeedStates
 ){
     LazyRow(modifier = Modifier,
     ) {
@@ -181,11 +205,10 @@ fun HomeFeedSpecialProductLazyRow(
         items(count = specialProducts.itemCount){index ->
 
             TopProductView(
-                imageUrl = specialProducts[index]!!.images[0],
-                title = specialProducts[index]!!.name,
-                price = specialProducts[index]!!.price.toString(),
-                id = specialProducts[index]!!.id,
-                onClick = onClick
+                specialProduct = specialProducts[index]!!,
+                onClick = onClick,
+                onEvent = onEvent,
+                state = state
             )
         }
     }
@@ -211,8 +234,8 @@ fun HomeFeedBestDealsProductLazyRow(
 }
 
 @Composable fun DealsDividedText(
-    text: String
-){
+    text: String){
+
     Column(
         modifier = Modifier
             .padding(vertical = 12.dp),
