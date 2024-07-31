@@ -1,5 +1,6 @@
 package com.jask.shopping.screens.billing_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +58,8 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.jask.shopping.data.model.Address
 import com.jask.shopping.data.model.CartProduct
+import com.jask.shopping.data.model.Order
+import com.jask.shopping.data.model.OrderStatus
 import com.jask.shopping.navigation.Screens
 
 @Composable
@@ -65,6 +70,13 @@ fun BillingScreen(
 ){
 
     var selectedAddress: Address = states.addressList.first()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = Unit) {
+        onEvent(
+            BillingEvents.GetCartProducts
+        )
+    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -97,7 +109,11 @@ fun BillingScreen(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = {
-                        navController.navigate(Screens.AddressScreen.route)
+                        if (states.addressList.size >= 3) {
+                            Toast.makeText(context, "Can't add more than 3 addresses", Toast.LENGTH_SHORT).show()
+                        } else {
+                            navController.navigate(Screens.AddressScreen.route)
+                        }
                     }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = null)
                     }
@@ -105,7 +121,7 @@ fun BillingScreen(
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                LineRadioButtons(
+                AddressSelectRadioButton(
                     onClickOption = { addressTitle ->
                         selectedAddress = states.addressList.first {
                             it.addressTitle == addressTitle
@@ -164,11 +180,13 @@ fun BillingScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF0013B3)
+                        containerColor = Color(0xFF0013B3),
+                        contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(20),
                     onClick = {
-                        /*onEvent(
+
+                        onEvent(
                             BillingEvents.PlaceOrder(
                                 order = Order(
                                     orderStatus = OrderStatus.Ordered.status,
@@ -177,9 +195,16 @@ fun BillingScreen(
                                     address = selectedAddress,
                                 )
                             )
-                        )*/
+                        )
+
+                        onEvent(
+                            BillingEvents.RemoveCartCollection
+                        )
+
                         navController.navigate(Screens.OrderScreen.route)
+
                     }) {
+
                     Text(
                         text = "Place Order",
                         fontSize = 18.sp
@@ -193,8 +218,8 @@ fun BillingScreen(
 }
 
 @Composable
-fun LineRadioButtons(onClickOption: (String) -> Unit,
-                     states: BillingStates) {
+fun AddressSelectRadioButton(onClickOption: (String) -> Unit,
+                             states: BillingStates) {
 
     val options = states.addressList.map { it.addressTitle }
 
@@ -252,13 +277,11 @@ fun CartContentRow(
         modifier = Modifier
             .height(100.dp)
             .width(width)
-            .padding(end = 8.dp,
+            .padding(
+                end = 8.dp,
                 bottom = 8.dp
             ),
-        shape = RectangleShape,
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF5F6F8)
-        )
+        shape = RectangleShape
     ) {
 
         Row(modifier = Modifier.fillMaxSize(),

@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductViewViewModel @Inject constructor(private  val repository: AuthRepository)  :ViewModel() {
+class ProductViewScreenViewModel @Inject constructor(private  val repository: AuthRepository)  :ViewModel() {
 
     private val _state = mutableStateOf(ProductViewStates())
     val state: State<ProductViewStates> = _state
@@ -22,13 +22,14 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
         repository.addProductToCart(cartProduct = cartProduct).collect { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _state.value = _state.value.copy(isLoading = true)
+                    _state.value = _state.value.copy(isAddProductLoading = true)
                 }
                 is Resource.Success -> {
-                    _state.value = _state.value.copy(isLoading = false)
+                    _state.value = _state.value.copy(isAddProductLoading = false)
+                    _state.value = _state.value.copy(isAddProductSuccess = true)
                 }
                 is Resource.Error -> {
-                    Log.d("TAG", " viewModel addUpdateProduct: error")
+                    Log.d("TAG", " viewModel addUpdateProduct: error ${result.message}")
                 }
             }
         }
@@ -41,8 +42,9 @@ class ProductViewViewModel @Inject constructor(private  val repository: AuthRepo
                     _state.value = _state.value.copy(isLoading = true)
                 }
                 is Resource.Success -> {
-                    _state.value = _state.value.copy(product = result.data!!)
                     _state.value = _state.value.copy(isLoading = false)
+                    _state.value = _state.value.copy(product = result.data!!)
+                    _state.value = _state.value.copy(isSuccess = true)
                 }
                 is Resource.Error -> {
                     Log.d("TAG", "get Product: ${result.message}")

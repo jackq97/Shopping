@@ -168,7 +168,6 @@ fun SettingSelectorRow(
 
     Row(
         modifier = Modifier
-            .background(color = Color(0xFFF7FAFB))
             .padding(vertical = 10.dp)
             .clickable { onClicked() },
         verticalAlignment = Alignment.CenterVertically) {

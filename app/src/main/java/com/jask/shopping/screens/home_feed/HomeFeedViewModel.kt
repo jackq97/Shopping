@@ -22,13 +22,17 @@ class HomeFeedViewModel @Inject constructor(
     val state: State<HomeFeedStates> = _state
 
     init {
-        //fetchProducts()
-        _state.value = _state.value.copy(
-            specialProduct = repository.getPaginatedSpecialItemProducts().cachedIn(viewModelScope),
-            bestProducts = repository.getPaginatedBestProducts().cachedIn(viewModelScope),
-            bestDeals = repository.getPaginatedBestDealsProducts().cachedIn(viewModelScope)
-        )
+        fetchProducts(category = "")
         getCartProduct()
+        Log.d("TAG", "init block : intialized")
+    }
+
+    private fun fetchProducts(category: String) = viewModelScope.launch {
+        _state.value = _state.value.copy(
+            specialProduct = repository.getPaginatedSpecialItemProducts(category).cachedIn(viewModelScope),
+            bestProducts = repository.getPaginatedBestProducts(category).cachedIn(viewModelScope),
+            bestDeals = repository.getPaginatedBestDealsProducts(category).cachedIn(viewModelScope)
+        )
     }
 
     private fun addUpdateProduct(cartProduct: CartProduct) = viewModelScope.launch {
@@ -42,7 +46,6 @@ class HomeFeedViewModel @Inject constructor(
                         isLoading = false,
                         isSuccess = true
                     )
-                    Log.d("TAG", "view model retrieving product")
                     getCartProduct()
                 }
                 is Resource.Error -> {
@@ -65,7 +68,6 @@ class HomeFeedViewModel @Inject constructor(
                         isLoading = false,
                         cartProducts = result.data!!
                     )
-                    Log.d("TAG", "view model Product: state updated ${result.data.size}")
                 }
                 is Resource.Error -> {
                     _state.value = _state.value.copy(
@@ -83,6 +85,9 @@ class HomeFeedViewModel @Inject constructor(
             }
             is HomeFeedEvents.AddUpdateProduct -> {
                 addUpdateProduct(event.cartProduct)
+            }
+            is HomeFeedEvents.GetDataByCategory -> {
+                fetchProducts(event.category)
             }
         }
     }

@@ -14,11 +14,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import com.jask.shopping.data.model.Order
 import com.jask.shopping.data.model.OrderStatus
 import com.jask.shopping.data.model.getOrderStatus
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderScreen(
     states: OrderStates,
@@ -45,6 +48,9 @@ fun OrderScreen(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             ) {
+
+                TopAppBar(title = { Text(text = "Orders") })
+
                 LazyColumn {
                     items(states.order) { data ->
                         OrderStatusColumn(data = data,

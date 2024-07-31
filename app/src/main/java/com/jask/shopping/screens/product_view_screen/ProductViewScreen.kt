@@ -1,6 +1,9 @@
 package com.jask.shopping.screens.product_view_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,22 +14,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +48,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import com.jask.shopping.data.model.CartProduct
+import com.jask.shopping.data.model.Product
+import com.jask.shopping.util.hexStringToColor
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -51,9 +58,13 @@ fun ProductViewScreen(
     onEvent: (ProductViewEvents) -> Unit,
     id: String) {
 
-    onEvent(
-        ProductViewEvents.GetProductsByCategory(id = id)
-    )
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = Unit) {
+        onEvent(
+            ProductViewEvents.GetProductsByCategory(id = id)
+        )
+    }
 
     val pagerState = rememberPagerState()
 
@@ -63,168 +74,209 @@ fun ProductViewScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp)
-        ) {
-
-            val product = state.product
-            val listOfColors = listOf(Color.Black, Color.Red, Color.Gray, Color.Blue, Color.Magenta, Color.Yellow)
-            val listOfSizes = listOf("XL", "S", "M", "L")
-
-            val pages: List<String> = product.images
-
-            Card(
+        if (state.isSuccess && state.product != null) {
+            Column(
                 modifier = Modifier
-                    .height(400.dp)
-                    .fillMaxWidth()
-            ) {
-                HorizontalPager(
-                    count = pages.size,
-                    state = pagerState,
+                    .fillMaxSize()
+                    .padding(12.dp)
+                ){
+
+                val product = state.product
+
+                val pages: List<String> = product.images
+
+                var selectedSize = product.sizes.first()
+                var selectedColor = product.colors.first()
+
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                ) { page ->
-                    Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                        androidx.compose.material.Surface(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            AsyncImage(
-                                model = pages[page],
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
+                        .height(400.dp)
+                        .fillMaxWidth()
+                ) {
+
+                    HorizontalPager(
+                        count = pages.size,
+                        state = pagerState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                    ) { page ->
+                        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                            androidx.compose.material.Surface(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                AsyncImage(
+                                    model = pages[page],
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
                 }
-            }
 
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    HorizontalPagerIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        pagerState = pagerState,
+                        activeColor = MaterialTheme.colorScheme.onBackground,
+                        inactiveColor = Color.Gray,
+                        indicatorShape = RoundedCornerShape(size = 2.dp)
+                    )
+                }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                HorizontalPagerIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    pagerState = pagerState,
-                    activeColor = MaterialTheme.colorScheme.onBackground,
-                    inactiveColor = Color.Gray,
-                    indicatorShape = RoundedCornerShape(size = 2.dp)
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Text(
+                        text = product.name,
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        text = "$ ${product.price.toInt()}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 25.sp
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(top = 5.dp),
+                    color = Color.Gray
                 )
-            }
 
-            Row(
-                modifier = Modifier
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = product.name,
-                    style = MaterialTheme.typography.headlineMedium
+                    text = "Colors",
+                    style = MaterialTheme.typography.titleSmall
                 )
+
+                ColorSelectRadioButton(onClickOption = { color ->
+                    selectedColor = color
+                }, product = product)
+
+                Text(
+                    text = "Sizes",
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                SizeSelectRadioButton(onClickOption = { size ->
+                    selectedSize = size
+                }, product = product)
+
+                Text(text = "Description",
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                HorizontalDivider()
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = "$ ${product.price.toInt()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontSize = 25.sp
-                )
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(top = 5.dp),
-                color = Color.Gray)
-
-            Row(modifier = Modifier.padding(top = 40.dp)) {
-                ColorsInfoColumn(
-                    modifier = Modifier.weight(1f),
-                    listOfColors = listOfColors
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                SizeColumnInfo(
-                    modifier = Modifier.weight(1f),
-                    listOfSizes = listOfSizes
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(4.dp),
-                onClick = {
-                    onEvent(
-                    ProductViewEvents.AddUpdateProduct(
-                        CartProduct(
-                            product = product,
-                            quantity = 1
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(4.dp),
+                    onClick = {
+                        onEvent(
+                            ProductViewEvents.AddUpdateProduct(
+                                CartProduct(
+                                    product = product,
+                                    quantity = 1,
+                                    selectedColor = selectedColor,
+                                    selectedSize = selectedSize
+                                )
+                            )
                         )
-                    ))
-                })
-            {
-                Text(
-                    text = "Add To Card",
-                    style = MaterialTheme.typography.labelMedium
-                )
+                    }) {
+
+
+                    if (state.isAddProductLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        if (state.isAddProductSuccess) {
+                            Toast.makeText(context, "Product Added", Toast.LENGTH_SHORT).show()
+                            state.isAddProductSuccess = false
+                        }
+                        Text(
+                            text = "Add To Card",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                }
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxSize()){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }
 }
 
 @Composable
-fun ColorsInfoColumn(
-    modifier: Modifier,
-    listOfColors: List<Color>) {
+fun ColorSelectRadioButton(
+    onClickOption: (String) -> Unit,
+    product: Product) {
 
-    var selectedTabState by remember { mutableIntStateOf(0) }
+    val options: List<String> = product.colors
 
-    Column(modifier = modifier) {
-        Text(
-            modifier = Modifier.padding(start = 5.dp),
-            text = "Color",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(4.dp))
+    var selectedOption by remember {
+        mutableStateOf(options.first().toString())
+    }
 
-        ScrollableTabRow(
-            selectedTabIndex = selectedTabState,
-            edgePadding = 0.dp,
-            divider = {}
-        ) {
+    val onSelectionChange = { text: String ->
+        selectedOption = text
+    }
 
-            listOfColors.forEachIndexed { index, color ->
-                Tab(selected = selectedTabState == index,
-                    onClick = { selectedTabState = index },
-                    content = {
-                        Box(modifier = Modifier.size(30.dp)
-                            .clip(shape = CircleShape)
-                            .background(color = color)
-                        )
-                    }
-                )
-            }
-        }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
 
-        LazyRow {
-            items(listOfColors){ colors ->
+        options.forEach { color ->
 
-                Box(modifier = Modifier.padding(horizontal = 5.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(horizontal = 4.dp)
-                            .background(
-                                color = colors,
-                                shape = CircleShape
-                            )
+            val bgColor: Color = hexStringToColor(color)
+
+            Box(modifier = Modifier
+                .size(30.dp)
+                .padding(end = 8.dp)
+                .border(width = 1.dp, color = Color.Gray, shape = CircleShape)
+                .clip(shape = RoundedCornerShape(100))
+                .background(color = bgColor)
+                .clickable {
+                    onSelectionChange(
+                        color
+                    )
+                    onClickOption(
+                        color
+                    )
+                },
+                contentAlignment = Alignment.Center
+            ){
+                if (color == selectedOption) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = Color(0xFF0013B3)
                     )
                 }
             }
@@ -233,38 +285,59 @@ fun ColorsInfoColumn(
 }
 
 @Composable
-fun SizeColumnInfo(
-    modifier: Modifier,
-    listOfSizes: List<String>) {
-    Column(modifier = modifier) {
-        Text(
-            modifier = Modifier.padding(start = 5.dp),
-            text = "Size",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        LazyRow {
+fun SizeSelectRadioButton(
+    onClickOption: (String) -> Unit,
+    product: Product) {
 
-            items(listOfSizes){ sizes ->
+    val options: List<String> = product.sizes
 
-                Box(modifier = Modifier.padding(horizontal = 5.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(horizontal = 4.dp)
-                            .background(
-                                color = Color.Gray,
-                                shape = CircleShape
-                            )
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = sizes)
+    var selectedOption by remember {
+        mutableStateOf(options.first().toString())
+    }
+
+    val onSelectionChange = { text: String ->
+        selectedOption = text
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        options.forEach { text ->
+
+            Box(modifier = Modifier
+                .size(30.dp)
+                .padding(end = 8.dp)
+                .clip(shape = RoundedCornerShape(100))
+                .background(color = Color.Gray)
+                .clickable {
+                    onSelectionChange(
+                        text
+                    )
+                    onClickOption(
+                        text
+                    )
+                },
+                contentAlignment = Alignment.Center
+            ){
+
+                Text(
+                    text = text.uppercase(),
+                    color = if (text == selectedOption) {
+                        Color(0xFF0013B3)
+
+                    } else {
+                        Color.Black
                     }
-                }
+                )
             }
         }
     }
+
 }
 
 @Composable

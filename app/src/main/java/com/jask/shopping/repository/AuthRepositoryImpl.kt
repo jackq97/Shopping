@@ -7,7 +7,6 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import com.jask.shopping.data.model.Address
 import com.jask.shopping.data.model.CartProduct
 import com.jask.shopping.data.model.Order
@@ -71,10 +70,12 @@ class AuthRepositoryImpl @Inject constructor(
                     Log.d("TAG", "User information added to Firestore successfully")
                 }
                 .addOnFailureListener { e ->
-                    Log.w("TAG", "Error adding user information to Firestore", e)
+                    Log.w("TAG", "Error adding user information to Firestore", e
+                )
             }
         }.catch {
-            emit(Resource.Error(it.message.toString())) }
+            emit(Resource.Error(it.message.toString()))
+        }
     }
 
     override fun uploadUserDataWithGoogleSignIn(signInResult: SignInResult): Flow<Resource<Unit>> = flow {
@@ -338,6 +339,25 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun deleteCartCollection(): Flow<Resource<Unit>> = flow {
+        try {
+            val uid = firebaseAuth.currentUser?.uid ?: throw Exception("User not authenticated")
+            val cartCollection = firestore.collection("users").document(uid).collection("cart")
+
+            // Retrieve all documents in the cart collection
+            val documents = cartCollection.get().await()
+            // Delete each document
+            for (document in documents) {
+                cartCollection.document(document.id).delete().await()
+            }
+
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error occurred"))
+        }
+    }
+
+
     override fun getAddresses(): Flow<Resource<List<Address>>> = flow {
         emit(Resource.Loading())
         try {
@@ -352,25 +372,61 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     // paginated products
-    override fun getPaginatedBestProducts() = Pager(
-        config = config
-    ) {
-        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
-            .whereEqualTo("category", "best products").limit(PAGE_SIZE))
+    override fun getPaginatedBestProducts(category: String) = Pager(config = config) {
+
+        var query = firestore.collection("Products")
+            .whereEqualTo("dealType", "best products")
+            .limit(PAGE_SIZE
+        )
+
+        if (category.isNotEmpty()) {
+            query = firestore.collection("Products")
+                .whereEqualTo("dealType", "best products")
+                .whereEqualTo("category", category)
+                .limit(PAGE_SIZE
+            )
+        }
+
+        ProductsPagingSource(queryProductsByName = query)
+
     }.flow
 
-    override fun getPaginatedBestDealsProducts() = Pager(
-        config = config
-    ) {
-        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
-            .whereEqualTo("category", "best deals").limit(PAGE_SIZE))
+    override fun getPaginatedBestDealsProducts(category: String) = Pager(config = config) {
+
+        // Start with the base query
+        var query = firestore.collection("Products")
+            .whereEqualTo("dealType", "best deals")
+            .limit(PAGE_SIZE
+        )
+
+        // Conditionally add the category filter if category is not null or empty
+        if (category.isNotEmpty()) {
+            query = firestore.collection("Products")
+                .whereEqualTo("dealType", "best deals")
+                .whereEqualTo("category", category)
+                .limit(PAGE_SIZE)
+        }
+
+        ProductsPagingSource(queryProductsByName = query)
+
     }.flow
 
-    override fun getPaginatedSpecialItemProducts() = Pager(
-        config = config
-    ) {
-        ProductsPagingSource(queryProductsByName = firestore.collection("Products")
-            .whereEqualTo("category", "special item").limit(PAGE_SIZE))
+    override fun getPaginatedSpecialItemProducts(category: String) = Pager(config = config) {
+
+        // Start with the base query
+        var query = firestore.collection("Products")
+            .whereEqualTo("dealType", "special item")
+            .limit(PAGE_SIZE
+        )
+
+        if (category.isNotEmpty()) {
+            query = firestore.collection("Products")
+                .whereEqualTo("dealType", "special item")
+                .whereEqualTo("category", category)
+                .limit(PAGE_SIZE)
+        }
+
+        ProductsPagingSource(queryProductsByName = query)
     }.flow
 
 }

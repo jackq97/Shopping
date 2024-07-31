@@ -22,6 +22,7 @@ interface AuthRepository{
     fun increaseProductQuantity(cartProductId: String): Flow<Resource<Unit>>
     fun decreaseProductQuantity(cartProductId: String): Flow<Resource<Unit>>
     fun getCartProducts(): Flow<Resource<List<CartProduct>>>
+    fun deleteCartCollection(): Flow<Resource<Unit>>
     fun getAddresses(): Flow<Resource<List<Address>>>
     fun addProductToCart(cartProduct: CartProduct) : Flow<Resource<Unit>>
     fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>>
@@ -31,7 +32,7 @@ interface AuthRepository{
     fun placeOrder(order: Order) : Flow<Resource<Unit>>
     fun getAllOrders(): Flow<Resource<List<Order>>>
     fun getOrderById(orderId: String): Flow<Resource<Order>>
-    fun getPaginatedBestProducts(): Flow<PagingData<Product>>
-    fun getPaginatedBestDealsProducts(): Flow<PagingData<Product>>
-    fun getPaginatedSpecialItemProducts(): Flow<PagingData<Product>>
+    fun getPaginatedBestProducts(category: String): Flow<PagingData<Product>>
+    fun getPaginatedBestDealsProducts(category: String): Flow<PagingData<Product>>
+    fun getPaginatedSpecialItemProducts(category: String): Flow<PagingData<Product>>
 }

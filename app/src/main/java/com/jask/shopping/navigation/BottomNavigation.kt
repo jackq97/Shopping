@@ -26,7 +26,7 @@ import com.jask.shopping.screens.order_details_screen.OrderDetailsViewModel
 import com.jask.shopping.screens.order_screen.OrderScreen
 import com.jask.shopping.screens.order_screen.OrderViewModel
 import com.jask.shopping.screens.product_view_screen.ProductViewScreen
-import com.jask.shopping.screens.product_view_screen.ProductViewViewModel
+import com.jask.shopping.screens.product_view_screen.ProductViewScreenViewModel
 import com.jask.shopping.screens.profile_screen.ProfileScreen
 import com.jask.shopping.screens.profile_screen.ProfileScreenViewModel
 import com.jask.shopping.screens.search_screen.SearchScreen
@@ -39,7 +39,7 @@ fun MyBottomNavigation(
     mainNavController: NavController
 ) {
 
-    val productViewViewModel: ProductViewViewModel = hiltViewModel()
+    val productViewViewModel: ProductViewScreenViewModel = hiltViewModel()
     val productState = productViewViewModel.state.value
     val profileScreenViewmodel: ProfileScreenViewModel = hiltViewModel()
     val homeFeedViewModel: HomeFeedViewModel = hiltViewModel()

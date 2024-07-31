@@ -64,7 +64,7 @@ fun OrderDetailsScreen(
 
                 Column {
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
@@ -113,7 +113,7 @@ fun OrderDetailsScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LazyColumn(modifier = Modifier.height(400.dp)
+                LazyColumn(modifier = Modifier.weight(1f)
                     .fillMaxWidth()
                 ) {
                     items(states.order.products) { data ->
@@ -181,7 +181,7 @@ fun OrderInfoRow(){
             DeliverText(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 30.dp),
+                    .padding(start = 20.dp),
                 label = "Delivered")
         }
     }

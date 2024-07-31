@@ -70,6 +70,28 @@ class BillingViewModel @Inject constructor(private val repository: AuthRepositor
         }
     }
 
+    private fun removeCartProducts() = viewModelScope.launch {
+        repository.deleteCartCollection().collect{ result ->
+            when (result) {
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isError = result.message
+                    )
+                }
+            }
+        }
+    }
+
     private fun placeOrder(order: Order) = viewModelScope.launch {
         repository.placeOrder(order).collect { result ->
             when (result) {
@@ -98,6 +120,12 @@ class BillingViewModel @Inject constructor(private val repository: AuthRepositor
         when (events){
             is BillingEvents.PlaceOrder -> {
                 placeOrder(events.order)
+            }
+            is BillingEvents.RemoveCartCollection -> {
+                removeCartProducts()
+            }
+            is BillingEvents.GetCartProducts -> {
+                getCartProduct()
             }
         }
     }

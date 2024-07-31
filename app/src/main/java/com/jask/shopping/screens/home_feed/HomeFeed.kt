@@ -1,6 +1,5 @@
 package com.jask.shopping.screens.home_feed
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,8 +49,13 @@ import com.jask.shopping.screens.home_feed.composables.TopProductView
 fun HomeFeedScreen(
     state: HomeFeedStates,
     onEvent: (HomeFeedEvents) -> Unit,
-    onClick: (String)-> Unit,
-){
+    onClick: (String)-> Unit){
+
+    LaunchedEffect(key1 = Unit) {
+        onEvent(
+            HomeFeedEvents.GetCartProductData
+        )
+    }
 
     var selectedTabState by remember { mutableIntStateOf(0) }
     val titles = listOf("Main","Chair","Cupboard","Accessory")
@@ -115,16 +119,24 @@ fun HomeFeedScreen(
 
                 when (selectedTabState) {
                     0 -> {
-                        Log.d("TAG", "HomeFeedScreen: 0")
+                        onEvent(
+                            HomeFeedEvents.GetDataByCategory("")
+                        )
                     }
                     1 -> {
-                        Log.d("TAG", "HomeFeedScreen: 1")
+                        onEvent(
+                            HomeFeedEvents.GetDataByCategory("Chair")
+                        )
                     }
                     2 -> {
-                        Log.d("TAG", "HomeFeedScreen: 2")
+                        onEvent(
+                            HomeFeedEvents.GetDataByCategory("Cupboard")
+                        )
                     }
                     3 -> {
-                        Log.d("TAG", "HomeFeedScreen: 3")
+                        onEvent(
+                            HomeFeedEvents.GetDataByCategory("Accessory")
+                        )
                     }
                 }
             }

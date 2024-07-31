@@ -140,7 +140,9 @@ fun TopProductView(
                             HomeFeedEvents.AddUpdateProduct(
                                 cartProduct = CartProduct(
                                     product = specialProduct,
-                                    quantity = 1
+                                    quantity = 1,
+                                    selectedColor = specialProduct.colors.first(),
+                                    selectedSize = specialProduct.sizes.first(),
                                 )
                             ))
                         }){

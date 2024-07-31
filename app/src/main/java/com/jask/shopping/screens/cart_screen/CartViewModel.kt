@@ -49,12 +49,12 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
             when (result) {
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
-                        isLoading = true
+                        //isLoading = true
                     )
                 }
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
-                        isLoading = false,
+                        //isLoading = false,
                         isSuccess = true,
                     )
                     getCartProduct()
@@ -73,12 +73,12 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
             when (result) {
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
-                        isLoading = true
+                        //isLoading = true
                     )
                 }
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
-                        isLoading = false,
+                        //isLoading = false,
                         isSuccess = true,
                     )
                     getCartProduct()
@@ -92,7 +92,9 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
 
+    private fun placeOrder(){
 
+    }
 
     fun onEvent(event: CartEvents) {
         when (event) {
@@ -104,6 +106,9 @@ class CartViewModel @Inject constructor(private val repository: AuthRepository) 
             }
             is CartEvents.PlaceOrder -> {
                 //placeOrder(event.order)
+            }
+            is CartEvents.GetCardProducts -> {
+                getCartProduct()
             }
         }
     }

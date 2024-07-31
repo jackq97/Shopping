@@ -6,4 +6,5 @@ import com.jask.shopping.screens.product_view_screen.ProductViewEvents
 sealed class HomeFeedEvents {
     data object GetCartProductData: HomeFeedEvents()
     data class AddUpdateProduct(val cartProduct: CartProduct): HomeFeedEvents()
+    data class GetDataByCategory(val category: String): HomeFeedEvents()
 }
